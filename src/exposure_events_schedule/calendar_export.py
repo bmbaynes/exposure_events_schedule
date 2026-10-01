@@ -335,7 +335,7 @@ def send_email_via_resend(
     """
     Send the email itinerary via Resend API.
     
-    Skips sending if RESEND_API_KEY or RECIPIENT_EMAIL environment variables are not set.
+    Skips sending if RESEND_API_KEY or RECEIVER_EMAIL environment variables are not set.
     
     Args:
         msg: The MIMEMultipart message to send
@@ -353,12 +353,12 @@ def send_email_via_resend(
     
     if to_emails is None:
         to_emails = []
-        recipient_email = os.getenv("RECIPIENT_EMAIL")
+        recipient_email = os.getenv("RECEIVER_EMAIL")
         if recipient_email:
             to_emails.append(recipient_email)
     
     if not to_emails:
-        print("Skipping email send: RECIPIENT_EMAIL environment variable not set")
+        print("Skipping email send: RECEIVER_EMAIL environment variable not set")
         return None
     
     # Use raw MIME message to preserve calendar headers, but also provide html/text as fallback

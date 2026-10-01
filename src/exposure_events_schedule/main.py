@@ -333,7 +333,7 @@ def generate_email_itinerary(
             if send_result:
                 print(f"  Email sent via Resend for tournament: {evt.name}")
             else:
-                print(f"  Email not sent (RESEND_API_KEY or RECIPIENT_EMAIL not configured)")
+                print(f"  Email not sent (RESEND_API_KEY or RECEIVER_EMAIL not configured)")
             
             results["emails_sent"].append({
                 "event_id": evt.id,
