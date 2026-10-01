@@ -338,6 +338,7 @@ def send_email_via_resend(
         response = resend.Emails.send({
             "from": from_email,
             "to": to_emails,
+            "subject": msg.get('Subject', 'Basketball Tournament Schedule'),
             "raw": raw_message,
             "html": html_body,
             "text": text_body,
