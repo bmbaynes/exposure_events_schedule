@@ -1,0 +1,29 @@
+name: Weekly Tournament Discovery
+
+on:
+  workflow_dispatch:
+    inputs: {}
+  schedule:
+    - cron: '0 1 * * 4'
+
+permissions:
+  contents: read
+
+jobs:
+  discover-and-send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update && sudo apt-get install -y chromium
+      - run: |
+          pip install -e . playwright resend
+          playwright install chromium
+      - run: python scripts/run_discovery.py
