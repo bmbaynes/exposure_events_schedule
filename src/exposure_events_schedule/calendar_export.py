@@ -161,7 +161,7 @@ def create_ics_attachment(ics_content: str, filename: str) -> MIMEBase:
     part.set_payload(ics_content)
     encoders.encode_base64(part)
     part.add_header('Content-Disposition', f'attachment; filename="{filename}"')
-    part.add_header('Content-Class', 'urn:content-classes:calendarmessage')
+    # Don't add Content-Class to attachment - only on main message
     return part
 
 
