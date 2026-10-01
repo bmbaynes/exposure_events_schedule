@@ -41,8 +41,21 @@ def format_game_time_range(date_str: str, time_str: str) -> str:
 
 
 def escape_ics_text(text: str) -> str:
-    """Escape special characters for ICS format."""
+    """Escape special characters for ICS format per RFC 5545."""
+    # Replace backslash first, then comma, semicolon, newline
     return text.replace("\\", "\\\\").replace(",", "\\,").replace(";", "\\;").replace("\n", "\\n")
+
+
+def create_ics_attachment(ics_content: str, filename: str) -> MIMEBase:
+    """Create a MIME attachment for an ICS file using quoted-printable encoding."""
+    part = MIMEBase('text', 'calendar', method='PUBLISH', name=filename)
+    part.set_payload(ics_content, charset='utf-8')
+    # Remove any default Content-Transfer-Encoding header
+    if 'Content-Transfer-Encoding' in part:
+        del part['Content-Transfer-Encoding']
+    encoders.encode_quopri(part)
+    part.add_header('Content-Disposition', f'attachment; filename="{filename}"')
+    return part
 
 
 def generate_ics_event(game: GameInfo, team_name: str, dt_stamp: str, organizer_email: Optional[str] = None, attendee_email: Optional[str] = None) -> str:
@@ -155,16 +168,6 @@ def games_to_ics_all_teams(
     return "\r\n".join(ics_lines)
 
 
-def create_ics_attachment(ics_content: str, filename: str) -> MIMEBase:
-    """Create a MIME attachment for an ICS file."""
-    part = MIMEBase('text', 'calendar', method='PUBLISH', name=filename)
-    part.set_payload(ics_content)
-    encoders.encode_base64(part)
-    part.add_header('Content-Disposition', f'attachment; filename="{filename}"')
-    # Don't add Content-Class to attachment - only on main message
-    return part
-
-
 def create_email_itinerary(
     games_by_team: dict,  # {team_name: [GameInfo, ...]}
     event_name: str,
@@ -199,8 +202,13 @@ def create_email_itinerary(
     # Create multipart/alternative for text and HTML
     alt_part = MIMEMultipart('alternative')
     
-    # Create HTML body
+    # Create HTML body with schema.org/Event structured data for Gmail auto-calendar
     html_parts = [
+        '<div itemscope itemtype="http://schema.org/SportsEvent">',
+        f'<meta itemprop="name" content="Basketball Tournament: {event_name}">',
+        f'<meta itemprop="startDate" content="{event_date_range.split(" - ")[0]}">',
+        f'<meta itemprop="endDate" content="{event_date_range.split(" - ")[1]}">',
+        f'<meta itemprop="description" content="Basketball tournament schedule for {event_name}">',
         f"<h2>Basketball Tournament Schedule: {event_name}</h2>",
         f"<p><strong>Date Range:</strong> {event_date_range}</p>",
         f"<p>This email contains a calendar attachment with all games for your teams. "
@@ -217,14 +225,29 @@ def create_email_itinerary(
     ]
     
     for team_name, games in games_by_team.items():
-        html_parts.append(f"<h3>{team_name} ({len(games)} games)</h3>")
+        html_parts.append(f'<div itemscope itemtype="http://schema.org/SportsTeam"><h3><span itemprop="name">{team_name}</span> ({len(games)} games)</h3></div>')
         html_parts.append("<ul>")
         for g in games:
             time_range = format_game_time_range(g.date, g.time)
+            # Parse date for schema.org format
+            game_date = g.date.replace("/", "-")
+            start_time = g.time.replace(" EDT", "").replace(" EST", "").replace(" PDT", "").replace(" PST", "")
+            start_dt = f"{game_date}T{start_time}"
+            end_dt = format_game_time_range(g.date, g.time).split(" - ")[1]
+            end_time = end_dt.replace(" EDT", "").replace(" EST", "").replace(" PDT", "").replace(" PST", "")
+            end_dt_full = f"{game_date}T{end_time}"
+            
             html_parts.append(
-                f"<li><strong>{time_range}</strong> - "
-                f"{'Home' if g.is_home else 'Away'} vs {g.opponent} "
-                f"@ {g.venue} ({g.court})</li>"
+                f'<li itemscope itemtype="http://schema.org/SportsEvent">'
+                f'<meta itemprop="name" content="{team_name} vs {g.opponent}">'
+                f'<meta itemprop="startDate" content="{start_dt}">'
+                f'<meta itemprop="endDate" content="{end_dt_full}">'
+                f'<meta itemprop="location" content="{g.venue}, {g.court}">'
+                f'<meta itemprop="description" content="{g.event_name} - {g.division}">'
+                f'<strong itemprop="startDate" content="{start_dt}">{time_range}</strong> - '
+                f'{"Home" if g.is_home else "Away"} vs {g.opponent} '
+                f'@ <span itemprop="location">{g.venue} ({g.court})</span>'
+                f'</li>'
             )
         html_parts.append("</ul>")
         
@@ -239,9 +262,20 @@ def create_email_itinerary(
     
     text_parts.append("\nThe attached .ics file contains all games for all teams above.")
     
-    # Add text and HTML parts to alternative
-    alt_part.attach(MIMEText("\n".join(text_parts), 'plain', 'utf-8'))
-    alt_part.attach(MIMEText("\n".join(html_parts), 'html', 'utf-8'))
+    html_parts.append("</div>")  # Close SportsEvent
+    
+    # Add text and HTML parts to alternative (use quoted-printable encoding)
+    from email.charset import QP, Charset
+    utf8_charset = Charset('utf-8')
+    utf8_charset.body_encoding = QP
+    
+    text_content = "\n".join(text_parts)
+    text_part = MIMEText(text_content, 'plain', utf8_charset)
+    alt_part.attach(text_part)
+    
+    html_content = "\n".join(html_parts)
+    html_part = MIMEText(html_content, 'html', utf8_charset)
+    alt_part.attach(html_part)
     
     # Add alternative part to mixed message
     msg.attach(alt_part)
