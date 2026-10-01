@@ -92,7 +92,7 @@ def generate_ics_event(game: GameInfo, team_name: str, dt_stamp: str, organizer_
     is_home = game.is_home
     location = f"{game.venue}, {game.court}"
 
-    summary = f"{'🏠' if is_home else '✈️'} {team_name} vs {opponent}"
+    summary = f"{'Home' if is_home else 'Away'} {team_name} vs {opponent}"
     description = (
         f"Event: {game.event_name}\n"
         f"Division: {game.division}\n"
