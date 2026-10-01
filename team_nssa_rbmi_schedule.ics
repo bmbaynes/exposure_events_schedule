@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Exposure Events//Basketball Schedule//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Team NSSA - RB/MI Schedule
+X-WR-TIMEZONE:America/New_York
+BEGIN:VEVENT
+UID:43019759@exposureevents.com
+DTSTAMP:20261001T113548Z
+DTSTART:20261003T143000
+DTEND:20261003T143000
+SUMMARY:🏠 Team NSSA - RB/MI vs NE Storm White - Jaycob
+DESCRIPTION:Event: ZERO GRAVITY NERR Hoop Festival\nDivision: Boys 7th\nBracket: \nRound: 0\nLocation: Mass Premier Courts\, Court 4\nOpponent: NE Storm White - Jaycob\nHome/Away: Home
+LOCATION:Mass Premier Courts\, Court 4
+END:VEVENT
+BEGIN:VEVENT
+UID:43019761@exposureevents.com
+DTSTAMP:20261001T113548Z
+DTSTART:20261003T153500
+DTEND:20261003T153500
+SUMMARY:✈️ Team NSSA - RB/MI vs Mass Premier White - Waldron
+DESCRIPTION:Event: ZERO GRAVITY NERR Hoop Festival\nDivision: Boys 7th\nBracket: \nRound: 0\nLocation: Mass Premier Courts\, Court 5\nOpponent: Mass Premier White - Waldron\nHome/Away: Away
+LOCATION:Mass Premier Courts\, Court 5
+END:VEVENT
+END:VCALENDAR

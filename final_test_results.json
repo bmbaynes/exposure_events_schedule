@@ -1,0 +1,220 @@
+{
+  "timestamp": "2026-10-01T11:38:16.842936",
+  "team_pattern": "Team NSSA*RB/MI*",
+  "reference_date": "2026-10-01T00:00:00",
+  "events_checked": [
+    {
+      "event_id": 270898,
+      "event_name": "PHD Fall Slamfest League Saturday 4",
+      "event_slug": "phd-fall-slamfest-league-saturday-4",
+      "start_date": "10/03/2026",
+      "end_date": "10/03/2026",
+      "organization": "Pinnacle Hoops Development"
+    },
+    {
+      "event_id": 271591,
+      "event_name": "ZERO GRAVITY NERR Hoop Festival",
+      "event_slug": "zero-gravity-nerr-hoop-festival",
+      "start_date": "10/03/2026",
+      "end_date": "10/04/2026",
+      "organization": "Zero Gravity Basketball"
+    },
+    {
+      "event_id": 271598,
+      "event_name": "ZERO GRAVITY 401 Classic",
+      "event_slug": "zero-gravity-401-classic",
+      "start_date": "10/03/2026",
+      "end_date": "10/04/2026",
+      "organization": "Zero Gravity Basketball"
+    },
+    {
+      "event_id": 271376,
+      "event_name": "ZERO GRAVITY Think Pink Challenge",
+      "event_slug": "zero-gravity-think-pink-challenge",
+      "start_date": "10/03/2026",
+      "end_date": "10/03/2026",
+      "organization": "Zero Gravity Basketball"
+    },
+    {
+      "event_id": 270907,
+      "event_name": "PHD Fall Slamfest League Sunday 4",
+      "event_slug": "phd-fall-slamfest-league-sunday-4",
+      "start_date": "10/04/2026",
+      "end_date": "10/04/2026",
+      "organization": "Pinnacle Hoops Development"
+    },
+    {
+      "event_id": 270899,
+      "event_name": "PHD Fall Slamfest Saturday 5",
+      "event_slug": "phd-fall-slamfest-saturday-5",
+      "start_date": "10/10/2026",
+      "end_date": "10/10/2026",
+      "organization": "Pinnacle Hoops Development"
+    },
+    {
+      "event_id": 272146,
+      "event_name": "Hall of Fame Fall Classic 2026",
+      "event_slug": "hall-of-fame-fall-classic-2026",
+      "start_date": "10/10/2026",
+      "end_date": "10/11/2026",
+      "organization": "Basketbull"
+    },
+    {
+      "event_id": 274011,
+      "event_name": "2026 Hoop Group Fall New England Jam Fest",
+      "event_slug": "2026-hoop-group-fall-new-england-jam-fest",
+      "start_date": "10/10/2026",
+      "end_date": "10/11/2026",
+      "organization": "Hoop Group"
+    },
+    {
+      "event_id": 271592,
+      "event_name": "ZERO GRAVITY Mass Madness",
+      "event_slug": "zero-gravity-mass-madness",
+      "start_date": "10/10/2026",
+      "end_date": "10/10/2026",
+      "organization": "Zero Gravity Basketball"
+    },
+    {
+      "event_id": 277818,
+      "event_name": "Team White Mamba Battle at the Pit",
+      "event_slug": "team-white-mamba-battle-at-the-pit",
+      "start_date": "10/10/2026",
+      "end_date": "10/11/2026",
+      "organization": "Team White Mamba"
+    },
+    {
+      "event_id": 270906,
+      "event_name": "PHD Fall Slamfest Sunday 5",
+      "event_slug": "phd-fall-slamfest-sunday-5",
+      "start_date": "10/11/2026",
+      "end_date": "10/11/2026",
+      "organization": "Pinnacle Hoops Development"
+    },
+    {
+      "event_id": 263872,
+      "event_name": "East Vs West - Sunday",
+      "event_slug": "east-vs-west-sunday",
+      "start_date": "10/11/2026",
+      "end_date": "10/11/2026",
+      "organization": "Syracuse Select @ Syracuse Sports Center"
+    }
+  ],
+  "team_matches": [
+    {
+      "team_id": 5578361,
+      "team_name": "Team NSSA - RB/MI (Boys 7th)",
+      "division": "",
+      "division_id": 1514727,
+      "event_id": 271591,
+      "event_name": "ZERO GRAVITY NERR Hoop Festival",
+      "event_slug": "zero-gravity-nerr-hoop-festival"
+    },
+    {
+      "team_id": 5578339,
+      "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+      "division": "",
+      "division_id": 1514727,
+      "event_id": 271591,
+      "event_name": "ZERO GRAVITY NERR Hoop Festival",
+      "event_slug": "zero-gravity-nerr-hoop-festival"
+    }
+  ],
+  "games": [
+    {
+      "game_id": 43019759,
+      "event_id": 271591,
+      "event_name": "ZERO GRAVITY NERR Hoop Festival",
+      "team_name": "Team NSSA - RB/MI (Boys 7th)",
+      "opponent": "NE Storm White - Jaycob",
+      "is_home": true,
+      "date": "10/03/2026",
+      "time": "2:30 PM EDT",
+      "venue": "Mass Premier Courts",
+      "court": "Court 4",
+      "division": "Boys 7th",
+      "bracket": "",
+      "round": 0,
+      "home_score": "",
+      "away_score": "",
+      "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43019759",
+      "game_url": "https://basketball.exposureevents.com/271591/zero-gravity-nerr-hoop-festival/game?gameid=43019759"
+    },
+    {
+      "game_id": 43019761,
+      "event_id": 271591,
+      "event_name": "ZERO GRAVITY NERR Hoop Festival",
+      "team_name": "Team NSSA - RB/MI (Boys 7th)",
+      "opponent": "Mass Premier White - Waldron",
+      "is_home": false,
+      "date": "10/03/2026",
+      "time": "3:35 PM EDT",
+      "venue": "Mass Premier Courts",
+      "court": "Court 5",
+      "division": "Boys 7th",
+      "bracket": "",
+      "round": 0,
+      "home_score": "",
+      "away_score": "",
+      "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43019761",
+      "game_url": "https://basketball.exposureevents.com/271591/zero-gravity-nerr-hoop-festival/game?gameid=43019761"
+    },
+    {
+      "game_id": 43019727,
+      "event_id": 271591,
+      "event_name": "ZERO GRAVITY NERR Hoop Festival",
+      "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+      "opponent": "South Shore Wildcats - Fazzi",
+      "is_home": true,
+      "date": "10/03/2026",
+      "time": "5:45 PM EDT",
+      "venue": "Thayer Sport Center ",
+      "court": "Court 3",
+      "division": "Boys 7th",
+      "bracket": "",
+      "round": 0,
+      "home_score": "",
+      "away_score": "",
+      "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43019727",
+      "game_url": "https://basketball.exposureevents.com/271591/zero-gravity-nerr-hoop-festival/game?gameid=43019727"
+    },
+    {
+      "game_id": 43019729,
+      "event_id": 271591,
+      "event_name": "ZERO GRAVITY NERR Hoop Festival",
+      "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+      "opponent": "Mass Premier Blue - Waldron",
+      "is_home": false,
+      "date": "10/03/2026",
+      "time": "6:50 PM EDT",
+      "venue": "Thayer Sport Center ",
+      "court": "Court 3",
+      "division": "Boys 7th",
+      "bracket": "",
+      "round": 0,
+      "home_score": "",
+      "away_score": "",
+      "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43019729",
+      "game_url": "https://basketball.exposureevents.com/271591/zero-gravity-nerr-hoop-festival/game?gameid=43019729"
+    },
+    {
+      "game_id": 43019730,
+      "event_id": 271591,
+      "event_name": "ZERO GRAVITY NERR Hoop Festival",
+      "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+      "opponent": "Breakout Blue - Cormos",
+      "is_home": true,
+      "date": "10/04/2026",
+      "time": "1:25 PM EDT",
+      "venue": "Sudbury Field House",
+      "court": "Court 3",
+      "division": "Boys 7th",
+      "bracket": "",
+      "round": 0,
+      "home_score": "",
+      "away_score": "",
+      "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43019730",
+      "game_url": "https://basketball.exposureevents.com/271591/zero-gravity-nerr-hoop-festival/game?gameid=43019730"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "event": {
+    "id": 271591,
+    "name": "ZERO GRAVITY NERR Hoop Festival",
+    "slug": "zero-gravity-nerr-hoop-festival"
+  },
+  "team_pattern": "Team NSSA*RB/MI*",
+  "matches": [
+    {
+      "team_id": 5578361,
+      "team_name": "Team NSSA - RB/MI (Boys 7th)",
+      "division_id": 1514727,
+      "division": "",
+      "city": "",
+      "state": ""
+    },
+    {
+      "team_id": 5578339,
+      "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+      "division_id": 1514727,
+      "division": "",
+      "city": "",
+      "state": ""
+    }
+  ],
+  "games": [],
+  "note": "Game extraction requires JavaScript rendering. Use Playwright or authenticated API.",
+  "timestamp": "2026-10-01T10:35:26.717667"
+}
