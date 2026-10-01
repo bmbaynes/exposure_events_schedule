@@ -14,12 +14,15 @@ def main():
         sender_email='Tournament Tracker <tracker@r1.modogt.com>'
     )
     
-    email_generated = results.get('email_generated')
-    email_sent = results.get('email_sent')
-    print(f'Email generated: {email_generated}')
-    print(f'Email sent: {email_sent}')
+    emails_generated = results.get('emails_generated', False)
+    emails_sent_list = results.get('emails_sent', [])
     
-    for email in results.get('emails_sent', []):
+    any_email_sent = any(e.get('email_sent', False) for e in emails_sent_list)
+    
+    print(f'Emails generated: {emails_generated}')
+    print(f'Any email sent: {any_email_sent}')
+    
+    for email in emails_sent_list:
         event_name = email['event_name']
         total_games = email['total_games']
         sent = email['email_sent']
@@ -29,7 +32,7 @@ def main():
             resend_id = resend_resp.get('id')
             print(f'    Resend ID: {resend_id}')
     
-    if not email_sent:
+    if not any_email_sent:
         print('WARNING: No emails were sent!')
         exit(1)
 
