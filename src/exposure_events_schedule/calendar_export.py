@@ -224,27 +224,39 @@ def create_email_itinerary(
         "-" * 60,
     ]
     
+    def _parse_to_iso8601(date_str: str, time_str: str) -> str:
+        """Convert MM/DD/YYYY date and HH:MM AM/PM time to ISO 8601 format."""
+        # Parse date: MM/DD/YYYY
+        month, day, year = date_str.split('/')
+        # Parse time: HH:MM AM/PM
+        time_part = time_str.replace(" EDT", "").replace(" EST", "").replace(" PDT", "").replace(" PST", "")
+        time_only, am_pm = time_part.split()
+        hour, minute = time_only.split(':')
+        hour = int(hour)
+        if am_pm == 'PM' and hour != 12:
+            hour += 12
+        elif am_pm == 'AM' and hour == 12:
+            hour = 0
+        # Format as ISO 8601 with timezone offset (-04:00 for EDT)
+        return f"{year}-{month}-{day}T{hour:02d}:{minute}:00-04:00"
+
     for team_name, games in games_by_team.items():
         html_parts.append(f'<div itemscope itemtype="http://schema.org/SportsTeam"><h3><span itemprop="name">{team_name}</span> ({len(games)} games)</h3></div>')
         html_parts.append("<ul>")
         for g in games:
             time_range = format_game_time_range(g.date, g.time)
-            # Parse date for schema.org format
-            game_date = g.date.replace("/", "-")
-            start_time = g.time.replace(" EDT", "").replace(" EST", "").replace(" PDT", "").replace(" PST", "")
-            start_dt = f"{game_date}T{start_time}"
-            end_dt = format_game_time_range(g.date, g.time).split(" - ")[1]
-            end_time = end_dt.replace(" EDT", "").replace(" EST", "").replace(" PDT", "").replace(" PST", "")
-            end_dt_full = f"{game_date}T{end_time}"
+            # Generate ISO 8601 dates for schema.org
+            start_dt_iso = _parse_to_iso8601(g.date, g.time)
+            end_dt_iso = _parse_to_iso8601(g.date, format_game_time_range(g.date, g.time).split(" - ")[1].strip())
             
             html_parts.append(
                 f'<li itemscope itemtype="http://schema.org/SportsEvent">'
                 f'<meta itemprop="name" content="{team_name} vs {g.opponent}">'
-                f'<meta itemprop="startDate" content="{start_dt}">'
-                f'<meta itemprop="endDate" content="{end_dt_full}">'
+                f'<meta itemprop="startDate" content="{start_dt_iso}">'
+                f'<meta itemprop="endDate" content="{end_dt_iso}">'
                 f'<meta itemprop="location" content="{g.venue}, {g.court}">'
                 f'<meta itemprop="description" content="{g.event_name} - {g.division}">'
-                f'<strong itemprop="startDate" content="{start_dt}">{time_range}</strong> - '
+                f'<strong itemprop="startDate" content="{start_dt_iso}">{time_range}</strong> - '
                 f'{"Home" if g.is_home else "Away"} vs {g.opponent} '
                 f'@ <span itemprop="location">{g.venue} ({g.court})</span>'
                 f'</li>'
@@ -264,7 +276,7 @@ def create_email_itinerary(
     
     html_parts.append("</div>")  # Close SportsEvent
     
-    # Add text and HTML parts to alternative (use quoted-printable encoding)
+    # Add text and HTML parts to alternative (use 8bit encoding for HTML to prevent line breaks)
     from email.charset import QP, Charset
     utf8_charset = Charset('utf-8')
     utf8_charset.body_encoding = QP
@@ -274,7 +286,9 @@ def create_email_itinerary(
     alt_part.attach(text_part)
     
     html_content = "\n".join(html_parts)
-    html_part = MIMEText(html_content, 'html', utf8_charset)
+    html_charset = Charset('utf-8')
+    html_charset.body_encoding = None  # Use 8bit - no line wrapping
+    html_part = MIMEText(html_content, 'html', html_charset)
     alt_part.attach(html_part)
     
     # Add alternative part to mixed message
