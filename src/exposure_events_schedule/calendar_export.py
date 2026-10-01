@@ -25,9 +25,19 @@ def format_ics_datetime(date_str: str, time_str: str) -> str:
 
 
 def parse_game_duration(time_str: str) -> timedelta:
-    """Estimate game duration. Default to 1.5 hours for basketball games."""
+    """Estimate game duration. Default to 1 hour for basketball games."""
     # Could be enhanced to parse actual game duration if available
-    return timedelta(hours=1, minutes=30)
+    return timedelta(hours=1)
+
+
+def format_game_time_range(date_str: str, time_str: str) -> str:
+    """Format game time range as 'MM/DD/YYYY HH:MM AM/PM - HH:MM AM/PM'."""
+    start_dt = format_ics_datetime(date_str, time_str)
+    start_datetime = datetime.strptime(start_dt, "%Y%m%dT%H%M%S")
+    end_datetime = start_datetime + parse_game_duration(time_str)
+    start_display = start_datetime.strftime("%m/%d/%Y %I:%M %p")
+    end_display = end_datetime.strftime("%I:%M %p")
+    return f"{start_display} - {end_display}"
 
 
 def escape_ics_text(text: str) -> str:
@@ -193,8 +203,9 @@ def create_email_itinerary(
         html_parts.append(f"<h3>{team_name} ({len(games)} games)</h3>")
         html_parts.append("<ul>")
         for g in games:
+            time_range = format_game_time_range(g.date, g.time)
             html_parts.append(
-                f"<li><strong>{g.date} {g.time}</strong> - "
+                f"<li><strong>{time_range}</strong> - "
                 f"{'Home' if g.is_home else 'Away'} vs {g.opponent} "
                 f"@ {g.venue} ({g.court})</li>"
             )
@@ -202,8 +213,9 @@ def create_email_itinerary(
         
         text_parts.append(f"\n{team_name} ({len(games)} games):")
         for g in games:
+            time_range = format_game_time_range(g.date, g.time)
             text_parts.append(
-                f"  {g.date} {g.time} - "
+                f"  {time_range} - "
                 f"{'Home' if g.is_home else 'Away'} vs {g.opponent} "
                 f"@ {g.venue} ({g.court})"
             )
