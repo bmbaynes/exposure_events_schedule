@@ -2,8 +2,7 @@ name: Weekly Tournament Discovery
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 1 * * 4'
+    inputs: {}
 
 permissions:
   contents: read
