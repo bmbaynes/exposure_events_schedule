@@ -157,7 +157,7 @@ def games_to_ics_all_teams(
 
 def create_ics_attachment(ics_content: str, filename: str) -> MIMEBase:
     """Create a MIME attachment for an ICS file."""
-    part = MIMEBase('text', 'calendar', method='REQUEST', name=filename)
+    part = MIMEBase('text', 'calendar', method='PUBLISH', name=filename)
     part.set_payload(ics_content)
     encoders.encode_base64(part)
     part.add_header('Content-Disposition', f'attachment; filename="{filename}"')
@@ -252,7 +252,7 @@ def create_email_itinerary(
         games_by_team, 
         event_name, 
         f"{event_name} - Full Schedule", 
-        method="REQUEST",
+        method="PUBLISH",
         organizer_email=sender_email,
         attendee_email=recipient_email,
     )
