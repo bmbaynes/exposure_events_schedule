@@ -1,0 +1,53 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Egg info
+*.egg-info/
+
+# Distribution / Packaging
+dist/
+build/
+*.egg
+
+# Test output and debug files
+*.eml
+*.ics
+*.json
+*.html
+*.log
+*.lock
+
+# IDE/Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local development
+.env
+.env.local
+
+# Debug files
+*_debug.html
+*_events.html
+*_full.html
+*_results.html
+*_schedule.html
+*.eml
+*.ics
+*.json
+*.html
