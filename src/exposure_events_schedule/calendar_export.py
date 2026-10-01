@@ -317,17 +317,30 @@ def send_email_via_resend(
         print("Skipping email send: RECIPIENT_EMAIL environment variable not set")
         return None
     
-    # Use raw MIME message to preserve calendar headers
+    # Use raw MIME message to preserve calendar headers, but also provide html/text as fallback
     import resend
     resend.api_key = api_key
     
     raw_message = msg.as_string()
+    
+    # Extract html and text for Resend (required even with raw)
+    html_body = ""
+    text_body = ""
+    
+    for part in msg.walk():
+        content_type = part.get_content_type()
+        if content_type == 'text/html':
+            html_body = part.get_payload(decode=True).decode('utf-8')
+        elif content_type == 'text/plain':
+            text_body = part.get_payload(decode=True).decode('utf-8')
     
     try:
         response = resend.Emails.send({
             "from": from_email,
             "to": to_emails,
             "raw": raw_message,
+            "html": html_body,
+            "text": text_body,
         })
         return response
     except Exception as e:
