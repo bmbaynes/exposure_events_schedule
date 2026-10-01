@@ -5,6 +5,7 @@ on:
     # Run every Thursday at 01:00 AM UTC
     - cron: '0 1 * * 4'
   workflow_dispatch:
+    inputs: {}
 
 permissions:
   contents: read
