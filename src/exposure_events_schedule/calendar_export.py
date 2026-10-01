@@ -325,9 +325,12 @@ def send_email_via_resend(
     
     # Use raw MIME message to preserve calendar headers, but also provide html/text as fallback
     import resend
+    import base64
     resend.api_key = api_key
     
     raw_message = msg.as_string()
+    raw_bytes = raw_message.encode('utf-8')
+    raw_b64 = base64.b64encode(raw_bytes).decode('utf-8')
     
     # Extract html and text for Resend (required even with raw)
     html_body = ""
@@ -345,7 +348,7 @@ def send_email_via_resend(
             "from": from_email,
             "to": to_emails,
             "subject": msg.get('Subject', 'Basketball Tournament Schedule'),
-            "raw": raw_message,
+            "raw": raw_b64,
             "html": html_body,
             "text": text_body,
         })
