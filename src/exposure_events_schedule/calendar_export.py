@@ -45,7 +45,7 @@ def escape_ics_text(text: str) -> str:
     return text.replace("\\", "\\\\").replace(",", "\\,").replace(";", "\\;").replace("\n", "\\n")
 
 
-def generate_ics_event(game: GameInfo, team_name: str, dt_stamp: str) -> str:
+def generate_ics_event(game: GameInfo, team_name: str, dt_stamp: str, organizer_email: Optional[str] = None, attendee_email: Optional[str] = None) -> str:
     """Generate a single VEVENT for a game."""
     start_dt = format_ics_datetime(game.date, game.time)
     start_datetime = datetime.strptime(start_dt, "%Y%m%dT%H%M%S")
@@ -68,7 +68,7 @@ def generate_ics_event(game: GameInfo, team_name: str, dt_stamp: str) -> str:
         f"Game URL: https://basketball.exposureevents.com/{game.event_id}/{game.event_slug}/game?gameid={game.game_id}"
     )
 
-    return "\r\n".join([
+    lines = [
         "BEGIN:VEVENT",
         f"UID:{game.game_id}@exposureevents.com",
         f"DTSTAMP:{dt_stamp}",
@@ -80,8 +80,15 @@ def generate_ics_event(game: GameInfo, team_name: str, dt_stamp: str) -> str:
         "STATUS:CONFIRMED",
         "TRANSP:OPAQUE",
         "SEQUENCE:0",
-        "END:VEVENT",
-    ])
+    ]
+    
+    if organizer_email:
+        lines.append(f"ORGANIZER;CN=Basketball Schedule:mailto:{organizer_email}")
+    if attendee_email:
+        lines.append(f"ATTENDEE;CN=Player;RSVP=TRUE:mailto:{attendee_email}")
+    
+    lines.append("END:VEVENT")
+    return "\r\n".join(lines)
 
 
 def games_to_ics(
@@ -114,7 +121,9 @@ def games_to_ics_all_teams(
     games_by_team: dict,  # {team_name: [GameInfo, ...]}
     event_name: str, 
     calendar_name: str = "Exposure Events Schedule",
-    method: str = "REQUEST"
+    method: str = "REQUEST",
+    organizer_email: Optional[str] = None,
+    attendee_email: Optional[str] = None,
 ) -> str:
     """Convert games from all teams into a single ICS format."""
     dt_stamp = datetime.now().strftime("%Y%m%dT%H%M%SZ")
@@ -136,7 +145,7 @@ def games_to_ics_all_teams(
             all_games.append((team_name, game))
     
     for team_name, game in all_games:
-        ics_lines.append(generate_ics_event(game, team_name, dt_stamp))
+        ics_lines.append(generate_ics_event(game, team_name, dt_stamp, organizer_email, attendee_email))
 
     ics_lines.append("END:VCALENDAR")
     return "\r\n".join(ics_lines)
@@ -229,7 +238,14 @@ def create_email_itinerary(
     # Add single ICS attachment with all games from all teams
     total_games = sum(len(games) for games in games_by_team.values())
     safe_event = re.sub(r'[<>:"/\\|?*]', '_', event_name)
-    ics_content = games_to_ics_all_teams(games_by_team, event_name, f"{event_name} - Full Schedule", method="REQUEST")
+    ics_content = games_to_ics_all_teams(
+        games_by_team, 
+        event_name, 
+        f"{event_name} - Full Schedule", 
+        method="REQUEST",
+        organizer_email=sender_email,
+        attendee_email=recipient_email,
+    )
     ics_attachment = create_ics_attachment(
         ics_content, 
         f"{safe_event}_schedule.ics"
@@ -301,49 +317,18 @@ def send_email_via_resend(
         print("Skipping email send: RECIPIENT_EMAIL environment variable not set")
         return None
     
-    # Extract email parts for Resend
-    subject = msg.get('Subject', 'Basketball Tournament Schedule')
-    
-    # Extract HTML and text bodies
-    html_body = ""
-    text_body = ""
-    attachments = []
-    
-    for part in msg.walk():
-        content_type = part.get_content_type()
-        content_disposition = part.get('Content-Disposition', '')
-        
-        if content_type == 'text/html':
-            html_body = part.get_payload(decode=True).decode('utf-8')
-        elif content_type == 'text/plain':
-            text_body = part.get_payload(decode=True).decode('utf-8')
-        elif 'attachment' in content_disposition:
-            filename = part.get_filename()
-            content = part.get_payload(decode=True)
-            if content:
-                import base64
-                attachments.append({
-                    "filename": filename,
-                    "content": base64.b64encode(content).decode('utf-8')
-                })
-    
-    # Prepare Resend payload
+    # Use raw MIME message to preserve calendar headers
     import resend
     resend.api_key = api_key
     
-    payload = {
-        "from": "Tournament Tracker <tracker@r1.modogt.com>",
-        "to": to_emails,
-        "subject": subject,
-        "html": html_body,
-        "text": text_body,
-    }
-    
-    if attachments:
-        payload["attachments"] = attachments
+    raw_message = msg.as_string()
     
     try:
-        response = resend.Emails.send(payload)
+        response = resend.Emails.send({
+            "from": from_email,
+            "to": to_emails,
+            "raw": raw_message,
+        })
         return response
     except Exception as e:
         raise RuntimeError(f"Failed to send email via Resend: {e}")
