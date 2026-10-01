@@ -173,10 +173,11 @@ def create_email_itinerary(
     Create a complete email message with a single ICS attachment containing all games for all teams.
     
     This generates a proper MIME multipart message with:
-    - HTML and plain text body
-    - Single ICS attachment containing all games for all teams in the tournament
+    - multipart/alternative for text/plain and text/html
+    - application/ics attachment
     - Proper headers for calendar auto-import (like airline itineraries)
     """
+    # Top-level multipart/mixed for attachment
     msg = MIMEMultipart('mixed')
     
     # Headers
@@ -190,6 +191,9 @@ def create_email_itinerary(
     
     # Headers for calendar auto-import (like airline itineraries)
     msg['Content-Class'] = 'urn:content-classes:calendarmessage'
+    
+    # Create multipart/alternative for text and HTML
+    alt_part = MIMEMultipart('alternative')
     
     # Create HTML body
     html_parts = [
@@ -231,12 +235,14 @@ def create_email_itinerary(
     
     text_parts.append("\nThe attached .ics file contains all games for all teams above.")
     
-    # Add text and HTML parts
-    msg.attach(MIMEText("\n".join(text_parts), 'plain', 'utf-8'))
-    msg.attach(MIMEText("\n".join(html_parts), 'html', 'utf-8'))
+    # Add text and HTML parts to alternative
+    alt_part.attach(MIMEText("\n".join(text_parts), 'plain', 'utf-8'))
+    alt_part.attach(MIMEText("\n".join(html_parts), 'html', 'utf-8'))
+    
+    # Add alternative part to mixed message
+    msg.attach(alt_part)
     
     # Add single ICS attachment with all games from all teams
-    total_games = sum(len(games) for games in games_by_team.values())
     safe_event = re.sub(r'[<>:"/\\|?*]', '_', event_name)
     ics_content = games_to_ics_all_teams(
         games_by_team, 
