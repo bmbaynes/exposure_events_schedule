@@ -381,6 +381,8 @@ def send_email_via_resend(
     
     Skips sending if RESEND_API_KEY or RECEIVER_EMAIL environment variables are not set.
     
+    Uses Resend's 'attachments' parameter for ICS files (raw MIME doesn't preserve attachments).
+    
     Args:
         msg: The MIMEMultipart message to send
         api_key: Resend API key (defaults to RESEND_API_KEY env var)
@@ -392,6 +394,7 @@ def send_email_via_resend(
         Resend API response dict, or None if skipped
     """
     import os
+    import base64
     api_key = api_key or os.getenv("RESEND_API_KEY")
     if not api_key:
         print("Skipping email send: RESEND_API_KEY environment variable not set")
@@ -407,43 +410,61 @@ def send_email_via_resend(
         print("Skipping email send: RECEIVER_EMAIL environment variable not set")
         return None
     
-    # Use raw MIME message to preserve full structure including ICS attachment
-    # Resend requires at least text/html even with raw; include minimal text
     import resend
-    import base64
     resend.api_key = api_key
     
-    raw_message = msg.as_string()
-    raw_bytes = raw_message.encode('utf-8')
-    raw_b64 = base64.b64encode(raw_bytes).decode('utf-8')
-    
-    # Extract plain text for Resend requirement (minimal)
-    text_body = ""
+    # Extract ICS attachment content
+    ics_content = None
+    ics_filename = "schedule.ics"
     for part in msg.walk():
-        if part.get_content_type() == 'text/plain':
-            text_body = part.get_payload(decode=True).decode('utf-8')
+        if part.get_content_type() == 'text/calendar':
+            ics_content = part.get_payload(decode=True).decode('utf-8')
+            ics_filename = part.get_filename() or "schedule.ics"
             break
     
+    # Extract HTML and text bodies
+    html_body = ""
+    text_body = ""
+    for part in msg.walk():
+        content_type = part.get_content_type()
+        if content_type == 'text/html' and not html_body:
+            html_body = part.get_payload(decode=True).decode('utf-8')
+        elif content_type == 'text/plain' and not text_body:
+            text_body = part.get_payload(decode=True).decode('utf-8')
+    
+    # Build Resend payload
+    payload = {
+        "from": from_email,
+        "to": to_emails,
+        "subject": msg.get('Subject', 'Basketball Tournament Schedule'),
+    }
+    
+    if html_body:
+        payload["html"] = html_body
+    if text_body:
+        payload["text"] = text_body
+    
+    # Add ICS attachment if present
+    if ics_content:
+        ics_b64 = base64.b64encode(ics_content.encode('utf-8')).decode('ascii')
+        payload["attachments"] = [{
+            "filename": ics_filename,
+            "content": ics_b64,
+        }]
+    
+    # Save debug copy (raw MIME) if directory provided
+    if debug_save_dir:
+        os.makedirs(debug_save_dir, exist_ok=True)
+        from datetime import datetime
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        subject = msg.get('Subject', 'email').replace(' ', '_').replace('/', '-')
+        debug_file = os.path.join(debug_save_dir, f"{timestamp}_{subject}.eml")
+        with open(debug_file, 'w', encoding='utf-8') as f:
+            f.write(msg.as_string())
+        print(f"  Debug email saved to {debug_file}")
+    
     try:
-        response = resend.Emails.send({
-            "from": from_email,
-            "to": to_emails,
-            "subject": msg.get('Subject', 'Basketball Tournament Schedule'),
-            "raw": raw_b64,
-            "text": text_body,
-        })
-        
-        # Save debug copy if directory provided
-        if debug_save_dir:
-            os.makedirs(debug_save_dir, exist_ok=True)
-            from datetime import datetime
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            subject = msg.get('Subject', 'email').replace(' ', '_').replace('/', '-')
-            debug_file = os.path.join(debug_save_dir, f"{timestamp}_{subject}.eml")
-            with open(debug_file, 'w', encoding='utf-8') as f:
-                f.write(raw_message)
-            print(f"  Debug email saved to {debug_file}")
-        
+        response = resend.Emails.send(payload)
         return response
     except Exception as e:
         raise RuntimeError(f"Failed to send email via Resend: {e}")
