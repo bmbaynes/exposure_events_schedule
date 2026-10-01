@@ -5,6 +5,7 @@ and generates email-ready MIME messages with ICS attachments for auto-import.
 
 import re
 import os
+import base64
 from typing import List, Optional
 from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
@@ -30,6 +31,28 @@ def parse_game_duration(time_str: str) -> timedelta:
     return timedelta(hours=1)
 
 
+def get_vtimezone_block() -> str:
+    """Generate VTIMEZONE block for America/New_York with DST rules."""
+    return """BEGIN:VTIMEZONE
+TZID:America/New_York
+X-LIC-LOCATION:America/New_York
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0400
+TZNAME:EDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0400
+TZOFFSETTO:-0500
+TZNAME:EST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE"""
+
+
 def format_game_time_range(date_str: str, time_str: str) -> str:
     """Format game time range as 'MM/DD/YYYY HH:MM AM/PM - HH:MM AM/PM'."""
     start_dt = format_ics_datetime(date_str, time_str)
@@ -47,10 +70,13 @@ def escape_ics_text(text: str) -> str:
 
 
 def create_ics_attachment(ics_content: str, filename: str) -> MIMEBase:
-    """Create a MIME attachment for an ICS file using base64 encoding."""
-    part = MIMEBase('text', 'calendar', method='PUBLISH', name=filename)
-    part.set_payload(ics_content)
-    encoders.encode_base64(part)
+    """Create a MIME attachment for an ICS file using base64 encoding with UTF-8 charset."""
+    part = MIMEBase('text', 'calendar', method='PUBLISH', name=filename, charset='utf-8')
+    # Encode content as UTF-8 bytes, then base64 encode
+    payload_bytes = ics_content.encode('utf-8')
+    payload_b64 = base64.b64encode(payload_bytes).decode('ascii')
+    part.set_payload(payload_b64)
+    part['Content-Transfer-Encoding'] = 'base64'
     part.add_header('Content-Disposition', f'attachment; filename="{filename}"')
     return part
 
@@ -82,8 +108,8 @@ def generate_ics_event(game: GameInfo, team_name: str, dt_stamp: str, organizer_
         "BEGIN:VEVENT",
         f"UID:{game.game_id}@exposureevents.com",
         f"DTSTAMP:{dt_stamp}",
-        f"DTSTART:{start_dt}",
-        f"DTEND:{end_dt}",
+        f"DTSTART;TZID=America/New_York:{start_dt}",
+        f"DTEND;TZID=America/New_York:{end_dt}",
         f"SUMMARY:{escape_ics_text(summary)}",
         f"DESCRIPTION:{escape_ics_text(description)}",
         f"LOCATION:{escape_ics_text(location)}",
@@ -123,6 +149,9 @@ def games_to_ics(
         f"X-WR-TIMEZONE:America/New_York",
         f"X-WR-RELCALID:{team_name.replace(' ', '_').lower()}@exposureevents.com",
     ]
+    
+    # Add VTIMEZONE block for America/New_York
+    ics_lines.append(get_vtimezone_block())
 
     for game in games:
         ics_lines.append(generate_ics_event(game, team_name, dt_stamp))
@@ -151,6 +180,9 @@ def games_to_ics_all_teams(
         f"X-WR-TIMEZONE:America/New_York",
         f"X-WR-RELCALID:{event_name.replace(' ', '_').lower()}@exposureevents.com",
     ]
+    
+    # Add VTIMEZONE block for America/New_York
+    ics_lines.append(get_vtimezone_block())
 
     # Combine all games from all teams
     all_games = []
