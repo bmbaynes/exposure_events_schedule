@@ -407,7 +407,8 @@ def send_email_via_resend(
         print("Skipping email send: RECEIVER_EMAIL environment variable not set")
         return None
     
-    # Use raw MIME message to preserve calendar headers, but also provide html/text as fallback
+    # Use raw MIME message to preserve full structure including ICS attachment
+    # Resend requires at least text/html even with raw; include minimal text
     import resend
     import base64
     resend.api_key = api_key
@@ -416,16 +417,12 @@ def send_email_via_resend(
     raw_bytes = raw_message.encode('utf-8')
     raw_b64 = base64.b64encode(raw_bytes).decode('utf-8')
     
-    # Extract html and text for Resend (required even with raw)
-    html_body = ""
+    # Extract plain text for Resend requirement (minimal)
     text_body = ""
-    
     for part in msg.walk():
-        content_type = part.get_content_type()
-        if content_type == 'text/html':
-            html_body = part.get_payload(decode=True).decode('utf-8')
-        elif content_type == 'text/plain':
+        if part.get_content_type() == 'text/plain':
             text_body = part.get_payload(decode=True).decode('utf-8')
+            break
     
     try:
         response = resend.Emails.send({
@@ -433,7 +430,6 @@ def send_email_via_resend(
             "to": to_emails,
             "subject": msg.get('Subject', 'Basketball Tournament Schedule'),
             "raw": raw_b64,
-            "html": html_body,
             "text": text_body,
         })
         
