@@ -1,0 +1,57 @@
+name: Weekly Tournament Discovery
+
+on:
+  workflow_dispatch:
+    inputs: {}
+  schedule:
+    - cron: '0 1 * * 4'
+
+permissions:
+  contents: read
+
+jobs:
+  discover-and-send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update && sudo apt-get install -y chromium
+      - run: |
+          pip install -e . playwright resend
+          playwright install chromium
+      - run: |
+          python -c "
+from exposure_events_schedule import generate_email_itinerary
+from datetime import datetime
+ref_date = datetime.now()
+print(f'Running discovery for weekend of: {ref_date}')
+results = generate_email_itinerary(
+    reference_date=ref_date,
+    team_pattern='Team NSSA*RB/MI*',
+    recipient_email='bmbaynes@gmail.com',
+    sender_email='Tournament Tracker <tracker@r1.modogt.com>'
+)
+email_generated = results.get('email_generated')
+email_sent = results.get('email_sent')
+print(f'Email generated: {email_generated}')
+print(f'Email sent: {email_sent}')
+for email in results.get('emails_sent', []):
+    event_name = email['event_name']
+    total_games = email['total_games']
+    sent = email['email_sent']
+    print(f'  - {event_name}: {total_games} games - Sent: {sent}')
+    resend_resp = email.get('resend_response')
+    if resend_resp:
+        resend_id = resend_resp.get('id')
+        print(f'    Resend ID: {resend_id}')
+if not email_sent:
+    print('WARNING: No emails were sent!')
+    exit(1)
+"
