@@ -47,13 +47,10 @@ def escape_ics_text(text: str) -> str:
 
 
 def create_ics_attachment(ics_content: str, filename: str) -> MIMEBase:
-    """Create a MIME attachment for an ICS file using quoted-printable encoding."""
+    """Create a MIME attachment for an ICS file using base64 encoding."""
     part = MIMEBase('text', 'calendar', method='PUBLISH', name=filename)
-    part.set_payload(ics_content, charset='utf-8')
-    # Remove any default Content-Transfer-Encoding header
-    if 'Content-Transfer-Encoding' in part:
-        del part['Content-Transfer-Encoding']
-    encoders.encode_quopri(part)
+    part.set_payload(ics_content)
+    encoders.encode_base64(part)
     part.add_header('Content-Disposition', f'attachment; filename="{filename}"')
     return part
 
@@ -345,6 +342,7 @@ def send_email_via_resend(
     api_key: Optional[str] = None,
     from_email: str = "Tournament Tracker <tracker@r1.modogt.com>",
     to_emails: List[str] = None,
+    debug_save_dir: Optional[str] = None,
 ) -> Optional[dict]:
     """
     Send the email itinerary via Resend API.
@@ -356,10 +354,12 @@ def send_email_via_resend(
         api_key: Resend API key (defaults to RESEND_API_KEY env var)
         from_email: Sender email address
         to_emails: List of recipient email addresses
+        debug_save_dir: Optional directory to save a copy of the sent email for debugging
         
     Returns:
         Resend API response dict, or None if skipped
     """
+    import os
     api_key = api_key or os.getenv("RESEND_API_KEY")
     if not api_key:
         print("Skipping email send: RESEND_API_KEY environment variable not set")
@@ -404,6 +404,18 @@ def send_email_via_resend(
             "html": html_body,
             "text": text_body,
         })
+        
+        # Save debug copy if directory provided
+        if debug_save_dir:
+            os.makedirs(debug_save_dir, exist_ok=True)
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            subject = msg.get('Subject', 'email').replace(' ', '_').replace('/', '-')
+            debug_file = os.path.join(debug_save_dir, f"{timestamp}_{subject}.eml")
+            with open(debug_file, 'w', encoding='utf-8') as f:
+                f.write(raw_message)
+            print(f"  Debug email saved to {debug_file}")
+        
         return response
     except Exception as e:
         raise RuntimeError(f"Failed to send email via Resend: {e}")
@@ -419,6 +431,7 @@ def send_itinerary_via_resend(
     recipient_email: Optional[str] = None,
     sender_email: Optional[str] = None,
     subject: Optional[str] = None,
+    debug_save_dir: Optional[str] = None,
 ) -> dict:
     """
     Create and send an email itinerary via Resend in one call.
@@ -433,6 +446,7 @@ def send_itinerary_via_resend(
         recipient_email: Single recipient (deprecated, use to_emails)
         sender_email: Sender email (deprecated, use from_email)
         subject: Email subject
+        debug_save_dir: Optional directory to save a copy of the sent email for debugging
         
     Returns:
         Resend API response dict
@@ -457,4 +471,4 @@ def send_itinerary_via_resend(
     )
     
     # Send via Resend
-    return send_email_via_resend(msg, api_key=api_key, from_email=from_email, to_emails=to_emails)
+    return send_email_via_resend(msg, api_key=api_key, from_email=from_email, to_emails=to_emails, debug_save_dir=debug_save_dir)

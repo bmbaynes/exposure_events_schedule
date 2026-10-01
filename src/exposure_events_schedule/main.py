@@ -327,7 +327,7 @@ def generate_email_itinerary(
                 print(f"  Email itinerary saved to {event_output_file}")
             
             # Send via Resend if environment variables are configured
-            send_result = send_email_via_resend(email_msg)
+            send_result = send_email_via_resend(email_msg, debug_save_dir="test_emails")
             email_sent = send_result is not None
             
             if send_result:
