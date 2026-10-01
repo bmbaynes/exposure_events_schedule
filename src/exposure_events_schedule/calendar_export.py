@@ -83,7 +83,11 @@ def generate_ics_event(game: GameInfo, team_name: str, dt_stamp: str, organizer_
     ]
     
     if organizer_email:
-        lines.append(f"ORGANIZER;CN=Basketball Schedule:mailto:{organizer_email}")
+        # Extract email address from "Name <email@domain.com>" format
+        import re
+        email_match = re.search(r'<([^>]+)>', organizer_email)
+        organizer_addr = email_match.group(1) if email_match else organizer_email
+        lines.append(f"ORGANIZER;CN=Basketball Schedule:mailto:{organizer_addr}")
     if attendee_email:
         lines.append(f"ATTENDEE;CN=Player;RSVP=TRUE:mailto:{attendee_email}")
     
