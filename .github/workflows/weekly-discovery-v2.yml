@@ -1,0 +1,85 @@
+name: Weekly Tournament Discovery
+
+on:
+  workflow_dispatch:
+    inputs: {}
+  schedule:
+    # Run every Thursday at 01:00 AM UTC
+    - cron: '0 1 * * 4'
+
+permissions:
+  contents: read
+
+jobs:
+  discover-and-send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    env:
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium chromium-driver
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install playwright resend
+          playwright install chromium
+      
+      - name: Run discovery and send email
+        run: |
+          python -c "
+from exposure_events_schedule import generate_email_itinerary
+from datetime import datetime
+
+ref_date = datetime.now()
+print(f'Running discovery for weekend of: {ref_date}')
+
+results = generate_email_itinerary(
+    reference_date=ref_date,
+    team_pattern='Team NSSA*RB/MI*',
+    output_file='nssa_itinerary.eml',
+    recipient_email='bmbaynes@gmail.com',
+    sender_email='Tournament Tracker <tracker@r1.modogt.com>'
+)
+
+print(f'Email generated: {results.get("email_generated")}')
+print(f'Email sent: {results.get("email_sent")}')
+for email in results.get('emails_sent', []):
+    print(f'  - {email["event_name"]}: {email["total_games"]} games - Sent: {email["email_sent"]}')
+    if email.get('resend_response'):
+        print(f'    Resend ID: {email["resend_response"].get("id")}')
+
+if not results.get('email_sent'):
+    print('WARNING: No emails were sent!')
+    exit(1)
+"
+      
+      - name: Upload email artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: email-itinerary
+          path: |
+            *.eml
+          retention-days: 7
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Weekly tournament discovery failed!"
+          echo "Check the workflow logs for details."
