@@ -317,19 +317,25 @@ def create_email_itinerary(
     
     text_parts.append("\nThe attached .ics file contains all games for all teams above.")
     
-    # Add change summary if provided
-    if change_summary:
+    # Add change summary if provided (including empty list for "no changes")
+    if change_summary is not None:
         text_parts.append("\n" + "=" * 60)
         text_parts.append("CHANGES SINCE LAST RUN:")
         text_parts.append("=" * 60)
-        for change in change_summary:
-            text_parts.append(change)
+        if change_summary:
+            for change in change_summary:
+                text_parts.append(change)
+        else:
+            text_parts.append("No changes since last run")
         
         html_parts.append("<hr>")
         html_parts.append("<h3>Changes Since Last Run</h3>")
         html_parts.append("<ul>")
-        for change in change_summary:
-            html_parts.append(f"<li>{change}</li>")
+        if change_summary:
+            for change in change_summary:
+                html_parts.append(f"<li>{change}</li>")
+        else:
+            html_parts.append("<li>No changes since last run</li>")
         html_parts.append("</ul>")
     
     html_parts.append("</div>")  # Close SportsEvent

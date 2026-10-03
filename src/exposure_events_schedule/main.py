@@ -340,7 +340,7 @@ def generate_email_itinerary(
                 recipient_email=recipient_email,
                 sender_email=sender_email,
                 game_sequences=game_sequences,
-                change_summary=changes if changes else None,
+                change_summary=changes,
             )
             
             # Save .eml file if requested

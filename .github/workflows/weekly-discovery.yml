@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
     inputs: {}
   schedule:
-    - cron: '0 1 * * 4'
+    - cron: '0 1 * * 4'   # Thursday 1:00 AM
+    - cron: '0 1 * * 6'   # Saturday 1:00 AM
+    - cron: '0 1 * * 0'   # Sunday 1:00 AM
 
 permissions:
   contents: read
