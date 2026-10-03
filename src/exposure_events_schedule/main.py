@@ -8,20 +8,16 @@ import os
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 
-from . import (
-    PublicExposureClient,
-    check_team_pattern,
-    TeamMatch,
-    extract_team_games,
-    GameInfo,
-    find_events_ma_nh,
-    Event,
+from .public_client import PublicExposureClient
+from .team_checker import check_team_pattern, TeamMatch
+from .game_extractor import extract_team_games, GameInfo
+from .event_finder import find_events_ma_nh, Event
+from .calendar_export import (
     create_email_itinerary,
     save_email_itinerary,
-    games_to_ics,
-    save_ics_file,
+    send_email_via_resend,
 )
-from .calendar_export import send_email_via_resend
+from .persistence import load_history, save_history, update_history, StoredGame, compare_games
 
 
 def run_with_known_events(
@@ -226,6 +222,9 @@ def generate_email_itinerary(
     Sends one email per tournament that has games for the matching teams.
     If no games are found in a particular tournament, no email is sent for that tournament.
     
+    Tracks changes between runs and includes change summary in emails.
+    Updates SEQUENCE in ICS for changed events.
+    
     Args:
         reference_date: Reference date for weekend filtering (defaults to now)
         team_pattern: Wildcard pattern to match team names
@@ -234,6 +233,9 @@ def generate_email_itinerary(
         sender_email: Email address of sender (for From header)
         max_events_per_state: Maximum events to scrape per state
     """
+    # Load previous history for change detection
+    history = load_history(team_pattern)
+    
     results = {
         "timestamp": datetime.now().isoformat(),
         "team_pattern": team_pattern,
@@ -258,6 +260,9 @@ def generate_email_itinerary(
         print(f"  - {evt.name} ({evt.start_date} - {evt.end_date}) [{evt.organization}]")
     
     public_client = PublicExposureClient()
+    
+    # Collect all events data for history update
+    events_data = {}
     
     for evt in events:
         print(f"\nProcessing event: {evt.name} (ID: {evt.id})")
@@ -308,18 +313,39 @@ def generate_email_itinerary(
         if event_games_by_team:
             print(f"\n  Generating email for tournament: {evt.name}")
             
+            # Store event data for history update
+            events_data[str(evt.id)] = {
+                "event_name": evt.name,
+                "games_by_team": event_games_by_team,
+            }
+            
+            # Compare with history to get sequences and changes
+            event_id_str = str(evt.id)
+            prev_event = history.get("games_by_event", {}).get(event_id_str, {})
+            prev_games = [StoredGame(**g) for g in prev_event.get("games", [])]
+            
+            all_current_games = []
+            for team_name, games in event_games_by_team.items():
+                all_current_games.extend(games)
+            
+            updated_games, changes = compare_games(all_current_games, prev_games)
+            
+            # Build game_to_sequence map for ICS generation
+            game_sequences = {g.game_id: g.sequence for g in updated_games}
+            
             email_msg = create_email_itinerary(
                 games_by_team=event_games_by_team,
                 event_name=evt.name,
                 event_date_range=f"{evt.start_date} - {evt.end_date}",
                 recipient_email=recipient_email,
                 sender_email=sender_email,
+                game_sequences=game_sequences,
+                change_summary=changes if changes else None,
             )
             
             # Save .eml file if requested
             event_output_file = None
             if output_file:
-                # Create event-specific filename
                 base, ext = os.path.splitext(output_file)
                 event_output_file = f"{base}_{evt.slug}{ext}"
                 save_email_itinerary(email_msg, event_output_file)
@@ -344,7 +370,18 @@ def generate_email_itinerary(
                 "email_sent": email_sent,
                 "output_file": event_output_file,
                 "resend_response": send_result,
+                "changes": changes,
             })
+    
+    # Update and save history
+    if events_data:
+        all_changes = update_history(history, events_data, team_pattern, reference_date or datetime.now())
+        save_history(history, team_pattern)
+        
+        if any(all_changes.values()):
+            print(f"\n=== Changes detected in {len(all_changes)} tournament(s) ===")
+            for event_id, changes in all_changes.items():
+                print(f"  Event {event_id}: {len(changes)} changes")
     
     # Build aggregated games_by_team for results
     all_games_by_team = {}

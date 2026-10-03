@@ -6,7 +6,7 @@ and generates email-ready MIME messages with ICS attachments for auto-import.
 import re
 import os
 import base64
-from typing import List, Optional
+from typing import List, Optional, Dict
 from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -81,7 +81,7 @@ def create_ics_attachment(ics_content: str, filename: str) -> MIMEBase:
     return part
 
 
-def generate_ics_event(game: GameInfo, team_name: str, dt_stamp: str, organizer_email: Optional[str] = None, attendee_email: Optional[str] = None) -> str:
+def generate_ics_event(game: GameInfo, team_name: str, dt_stamp: str, organizer_email: Optional[str] = None, attendee_email: Optional[str] = None, sequence: int = 0) -> str:
     """Generate a single VEVENT for a game."""
     start_dt = format_ics_datetime(game.date, game.time)
     start_datetime = datetime.strptime(start_dt, "%Y%m%dT%H%M%S")
@@ -115,7 +115,7 @@ def generate_ics_event(game: GameInfo, team_name: str, dt_stamp: str, organizer_
         f"LOCATION:{escape_ics_text(location)}",
         "STATUS:CONFIRMED",
         "TRANSP:OPAQUE",
-        "SEQUENCE:0",
+        f"SEQUENCE:{sequence}",
     ]
     
     if organizer_email:
@@ -167,6 +167,7 @@ def games_to_ics_all_teams(
     method: str = "REQUEST",
     organizer_email: Optional[str] = None,
     attendee_email: Optional[str] = None,
+    game_sequences: Optional[Dict[str, int]] = None,
 ) -> str:
     """Convert games from all teams into a single ICS format."""
     dt_stamp = datetime.now().strftime("%Y%m%dT%H%M%SZ")
@@ -191,7 +192,8 @@ def games_to_ics_all_teams(
             all_games.append((team_name, game))
     
     for team_name, game in all_games:
-        ics_lines.append(generate_ics_event(game, team_name, dt_stamp, organizer_email, attendee_email))
+        sequence = game_sequences.get(game.game_id, 0) if game_sequences else 0
+        ics_lines.append(generate_ics_event(game, team_name, dt_stamp, organizer_email, attendee_email, sequence=sequence))
 
     ics_lines.append("END:VCALENDAR")
     return "\r\n".join(ics_lines)
@@ -204,6 +206,8 @@ def create_email_itinerary(
     recipient_email: Optional[str] = None,
     sender_email: Optional[str] = None,
     subject: Optional[str] = None,
+    game_sequences: Optional[Dict[str, int]] = None,
+    change_summary: Optional[List[str]] = None,
 ) -> MIMEMultipart:
     """
     Create a complete email message with a single ICS attachment containing all games for all teams.
@@ -212,6 +216,16 @@ def create_email_itinerary(
     - multipart/alternative for text/plain and text/html
     - application/ics attachment
     - Proper headers for calendar auto-import (like airline itineraries)
+    
+    Args:
+        games_by_team: Dict mapping team names to lists of GameInfo
+        event_name: Name of the tournament/event
+        event_date_range: Date range string
+        recipient_email: Email address of recipient
+        sender_email: Email address of sender
+        subject: Email subject
+        game_sequences: Optional dict mapping game_id to SEQUENCE number for ICS
+        change_summary: Optional list of change description lines to include in email
     """
     # Top-level multipart/mixed for attachment
     msg = MIMEMultipart('mixed')
@@ -303,6 +317,21 @@ def create_email_itinerary(
     
     text_parts.append("\nThe attached .ics file contains all games for all teams above.")
     
+    # Add change summary if provided
+    if change_summary:
+        text_parts.append("\n" + "=" * 60)
+        text_parts.append("CHANGES SINCE LAST RUN:")
+        text_parts.append("=" * 60)
+        for change in change_summary:
+            text_parts.append(change)
+        
+        html_parts.append("<hr>")
+        html_parts.append("<h3>Changes Since Last Run</h3>")
+        html_parts.append("<ul>")
+        for change in change_summary:
+            html_parts.append(f"<li>{change}</li>")
+        html_parts.append("</ul>")
+    
     html_parts.append("</div>")  # Close SportsEvent
     
     # Add text and HTML parts to alternative (use 8bit encoding for HTML to prevent line breaks)
@@ -332,6 +361,7 @@ def create_email_itinerary(
         method="PUBLISH",
         organizer_email=sender_email,
         attendee_email=recipient_email,
+        game_sequences=game_sequences,
     )
     ics_attachment = create_ics_attachment(
         ics_content, 

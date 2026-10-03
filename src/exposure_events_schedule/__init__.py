@@ -12,6 +12,7 @@ from .calendar_export import (
     send_email_via_resend,
 )
 from .main import run_with_known_events, run_auto_discovery, generate_email_itinerary
+from .persistence import load_history, save_history, update_history, StoredGame
 
 __all__ = [
     "PublicExposureClient",
@@ -29,6 +30,10 @@ __all__ = [
     "run_with_known_events",
     "run_auto_discovery",
     "generate_email_itinerary",
+    "load_history",
+    "save_history",
+    "update_history",
+    "StoredGame",
 ]
 
 __version__ = "1.0.0"
