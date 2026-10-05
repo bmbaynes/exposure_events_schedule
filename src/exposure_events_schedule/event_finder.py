@@ -75,13 +75,11 @@ def parse_date_range(date_str: str):
 
 
 def get_weekend_range(reference_date: Optional[datetime] = None):
-    """Get Saturday and Sunday of the current/upcoming weekend."""
+    """Get Saturday and Sunday of the current/upcoming weekend (Monday as first day of week)."""
     if reference_date is None:
         reference_date = datetime.now()
     
     days_ahead = 5 - reference_date.weekday()  # 5 = Saturday
-    if days_ahead < 0:
-        days_ahead += 7
     saturday = reference_date + timedelta(days=days_ahead)
     sunday = saturday + timedelta(days=1)
     return saturday, sunday
