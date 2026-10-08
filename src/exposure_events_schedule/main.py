@@ -6,7 +6,7 @@ Supports both known event IDs and automatic event discovery via web scraping.
 import json
 import os
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .public_client import PublicExposureClient
 from .team_checker import check_team_pattern, TeamMatch
@@ -415,6 +415,69 @@ def generate_email_itinerary(
         ]
     
     results["emails_generated"] = len(results["emails_sent"]) > 0
+    
+    # If no emails were sent (no matching teams found in any event), send a summary email
+    if not results["emails_sent"] and events:
+        print(f"\nNo matching teams found in any event. Sending summary email...")
+        
+        # Create summary email with list of events searched
+        from .calendar_export import create_email_itinerary, save_email_itinerary, send_email_via_resend
+        
+        # Build event list for the email
+        event_list_text = "\n".join([
+            f"  - {e['event_name']} ({e.get('start_date', '')} - {e.get('end_date', '')}) [{e.get('organization', '')}]"
+            for e in results["events_checked"]
+        ])
+        
+        # Create a dummy games_by_team with no games but a summary
+        games_by_team = {
+            "No Matching Teams Found": []
+        }
+        
+        reference_dt = reference_date or datetime.now()
+        date_range = f"{reference_dt.strftime('%m/%d/%Y')} - {(reference_dt + timedelta(days=6)).strftime('%m/%d/%Y')}"
+        
+        summary_msg = create_email_itinerary(
+            games_by_team=games_by_team,
+            event_name="Team NSSA Schedule - Weekend Summary",
+            event_date_range=date_range,
+            recipient_email=recipient_email,
+            sender_email=sender_email,
+            subject=f"Team NSSA Weekend Summary - No Games Found ({date_range})",
+            change_summary=[
+                f"No matching teams found for pattern '{team_pattern}'",
+                f"Events searched ({len(results['events_checked'])}):",
+                event_list_text,
+            ],
+        )
+        
+        # Save .eml file if requested
+        if output_file:
+            save_email_itinerary(summary_msg, output_file)
+            print(f"  Summary email saved to {output_file}")
+        
+        # Send via Resend
+        send_result = send_email_via_resend(summary_msg, debug_save_dir="test_emails")
+        email_sent = send_result is not None
+        
+        if send_result:
+            print(f"  Summary email sent via Resend")
+        else:
+            print(f"  Summary email not sent (RESEND_API_KEY or RECEIVER_EMAIL not configured)")
+        
+        results["emails_sent"].append({
+            "event_id": None,
+            "event_name": "Weekend Summary (No Matches)",
+            "event_slug": "no-matches",
+            "teams": [],
+            "total_games": 0,
+            "email_sent": email_sent,
+            "output_file": output_file,
+            "resend_response": send_result,
+            "changes": [],
+        })
+        
+        results["emails_generated"] = True
     
     return results
 

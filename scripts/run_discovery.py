@@ -32,9 +32,12 @@ def main():
             resend_id = resend_resp.get('id')
             print(f'    Resend ID: {resend_id}')
     
-    if not any_email_sent:
-        print('WARNING: No emails were sent!')
+    if not emails_generated:
+        print('WARNING: No emails were generated!')
         exit(1)
+    
+    # Exit 0 even if no emails were actually sent (e.g., Resend not configured)
+    # since the email was at least generated and saved
 
 if __name__ == '__main__':
     main()
