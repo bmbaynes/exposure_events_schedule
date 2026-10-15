@@ -421,7 +421,6 @@ def generate_email_itinerary(
         print(f"\nNo matching teams found in any event. Sending summary email...")
         
         # Create summary email with list of events searched
-        from .calendar_export import create_email_itinerary, save_email_itinerary, send_email_via_resend
         
         # Build event list for the email
         event_list_text = "\n".join([
