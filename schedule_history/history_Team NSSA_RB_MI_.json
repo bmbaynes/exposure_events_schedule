@@ -80,6 +80,18 @@
           "has_changes": true
         }
       }
+    },
+    {
+      "timestamp": "2026-10-17T12:26:40.101632",
+      "reference_date": "2026-10-17T12:26:18.545947",
+      "team_pattern": "Team NSSA*RB/MI*",
+      "events": {
+        "271593": {
+          "event_name": "ZERO GRAVITY BEAST of the East",
+          "changes": [],
+          "has_changes": false
+        }
+      }
     }
   ],
   "games_by_event": {
