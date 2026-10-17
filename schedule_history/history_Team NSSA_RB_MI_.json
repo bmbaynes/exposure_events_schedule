@@ -65,6 +65,21 @@
           "has_changes": false
         }
       }
+    },
+    {
+      "timestamp": "2026-10-17T12:23:57.154652",
+      "reference_date": "2026-10-17T12:23:34.345666",
+      "team_pattern": "Team NSSA*RB/MI*",
+      "events": {
+        "271593": {
+          "event_name": "ZERO GRAVITY BEAST of the East",
+          "changes": [
+            "  NEW: Team NSSA Black - RB/MI (Boys 7th) vs Metro West Swarm - Darren on 10/17/2026 at 12:20 PM EDT (Mass Premier Courts)",
+            "  NEW: Team NSSA Black - RB/MI (Boys 7th) vs WB Wildcats on 10/17/2026 at 2:30 PM EDT (Mass Premier Courts)"
+          ],
+          "has_changes": true
+        }
+      }
     }
   ],
   "games_by_event": {
@@ -169,6 +184,51 @@
           "away_score": "",
           "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43019730",
           "game_url": "https://basketball.exposureevents.com/271591/zero-gravity-nerr-hoop-festival/game?gameid=43019730",
+          "sequence": 0
+        }
+      ]
+    },
+    "271593": {
+      "event_name": "ZERO GRAVITY BEAST of the East",
+      "games": [
+        {
+          "game_id": 43242049,
+          "event_id": 271593,
+          "event_name": "ZERO GRAVITY BEAST of the East",
+          "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+          "opponent": "Metro West Swarm - Darren",
+          "is_home": true,
+          "date": "10/17/2026",
+          "time": "12:20 PM EDT",
+          "venue": "Mass Premier Courts",
+          "court": "Court 5",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43242049",
+          "game_url": "https://basketball.exposureevents.com/271593/zero-gravity-beast-of-the-east/game?gameid=43242049",
+          "sequence": 0
+        },
+        {
+          "game_id": 43242050,
+          "event_id": 271593,
+          "event_name": "ZERO GRAVITY BEAST of the East",
+          "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+          "opponent": "WB Wildcats",
+          "is_home": true,
+          "date": "10/17/2026",
+          "time": "2:30 PM EDT",
+          "venue": "Mass Premier Courts",
+          "court": "Court 5",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43242050",
+          "game_url": "https://basketball.exposureevents.com/271593/zero-gravity-beast-of-the-east/game?gameid=43242050",
           "sequence": 0
         }
       ]
