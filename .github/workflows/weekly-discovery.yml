@@ -28,8 +28,8 @@ jobs:
       - run: |
           pip install -e . playwright resend
           playwright install chromium
-       - run: python scripts/run_discovery.py
-       - uses: stefanzweifel/git-auto-commit-action@v5
-         with:
-           commit_message: "Update tournament discovery history"
-           file_pattern: "schedule_history/*.json"
+      - run: python scripts/run_discovery.py
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update tournament discovery history"
+          file_pattern: "schedule_history/*.json"
