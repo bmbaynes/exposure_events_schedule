@@ -90,13 +90,14 @@ def event_overlaps_weekend(start: datetime, end: datetime, saturday: datetime, s
     return start <= sunday and end >= saturday
 
 
-def scrape_state_events(state: str, start_date: str, max_events: int = 100) -> List[Event]:
+def scrape_state_events(state: str, start_date: str, end_date: Optional[str] = None, max_events: int = 100) -> List[Event]:
     """
     Scrape events for a specific state from the search results.
     
     Args:
         state: State name (e.g., 'massachusetts', 'new-hampshire')
         start_date: Start date filter in MM/DD/YYYY format
+        end_date: End date filter in MM/DD/YYYY format
         max_events: Maximum number of events to return
     
     Returns:
@@ -125,7 +126,18 @@ def scrape_state_events(state: str, start_date: str, max_events: int = 100) -> L
                 }
             }''', start_date)
             page.wait_for_timeout(1000)
-            
+
+            # Fill end date if provided
+            if end_date:
+                page.evaluate('''(date) => {
+                    const input = document.getElementById('EndDateString');
+                    if (input) {
+                        input.value = date;
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }''', end_date)
+                page.wait_for_timeout(1000)
+
             # Submit form
             page.evaluate('''() => {
                 const form = document.querySelector('form[data-bind*="submit: events.filter"]');
@@ -217,11 +229,13 @@ def find_events_ma_nh(
     if reference_date is None:
         reference_date = datetime.now()
     
-    start_date = reference_date.strftime("%m/%d/%Y")
+    saturday, sunday = get_weekend_range(reference_date)
+    scrape_date = min(reference_date, saturday)
+    start_date = scrape_date.strftime("%m/%d/%Y")
     
     # Scrape both states
-    ma_events = scrape_state_events('massachusetts', start_date, max_events_per_state)
-    nh_events = scrape_state_events('new-hampshire', start_date, max_events_per_state)
+    ma_events = scrape_state_events('massachusetts', start_date, sunday.strftime("%m/%d/%Y"), max_events_per_state)
+    nh_events = scrape_state_events('new-hampshire', start_date, sunday.strftime("%m/%d/%Y"), max_events_per_state)
     
     all_events = ma_events + nh_events
     
@@ -234,7 +248,6 @@ def find_events_ma_nh(
             unique_events.append(event)
     
     # Filter for current/upcoming weekend
-    saturday, sunday = get_weekend_range(reference_date)
     next_saturday = saturday + timedelta(days=7)
     next_sunday = sunday + timedelta(days=7)
     
