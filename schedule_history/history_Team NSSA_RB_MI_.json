@@ -92,6 +92,25 @@
           "has_changes": false
         }
       }
+    },
+    {
+      "timestamp": "2026-10-22T10:54:38.951040",
+      "reference_date": "2026-10-22T10:54:15.133193",
+      "team_pattern": "Team NSSA*RB/MI*",
+      "events": {
+        "271379": {
+          "event_name": "ZERO GRAVITY Battle for the Belt North",
+          "changes": [
+            "  NEW: Team NSSA - RB/MI (Boys 7th) vs Spartans Select - Cyr on 10/24/2026 at 11:15 AM EDT (The Sports Barn)",
+            "  NEW: Team NSSA - RB/MI (Boys 7th) vs NE Storm Silver - Ryan on 10/24/2026 at 12:20 PM EDT (The Sports Barn)",
+            "  NEW: Team NSSA - RB/MI (Boys 7th) vs NextGen Playmakers on 10/25/2026 at 9:05 AM EDT (The RIM Sports Complex)",
+            "  NEW: Team NSSA Black - RB/MI (Boys 7th) vs Spartans Select - Cyr on 10/24/2026 at 10:10 AM EDT (The Sports Barn)",
+            "  NEW: Team NSSA Black - RB/MI (Boys 7th) vs NE Storm Silver - Ryan on 10/24/2026 at 1:25 PM EDT (The Sports Barn)",
+            "  NEW: Team NSSA Black - RB/MI (Boys 7th) vs Arsenal Black - Vasquex on 10/25/2026 at 8:00 AM EDT (The RIM Sports Complex)"
+          ],
+          "has_changes": true
+        }
+      }
     }
   ],
   "games_by_event": {
@@ -241,6 +260,131 @@
           "away_score": "",
           "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43242050",
           "game_url": "https://basketball.exposureevents.com/271593/zero-gravity-beast-of-the-east/game?gameid=43242050",
+          "sequence": 0
+        }
+      ]
+    },
+    "271379": {
+      "event_name": "ZERO GRAVITY Battle for the Belt North",
+      "games": [
+        {
+          "game_id": 43394403,
+          "event_id": 271379,
+          "event_name": "ZERO GRAVITY Battle for the Belt North",
+          "team_name": "Team NSSA - RB/MI (Boys 7th)",
+          "opponent": "Spartans Select - Cyr",
+          "is_home": false,
+          "date": "10/24/2026",
+          "time": "11:15 AM EDT",
+          "venue": "The Sports Barn",
+          "court": "Court 2",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43394403",
+          "game_url": "https://basketball.exposureevents.com/271379/zero-gravity-battle-for-the-belt-north/game?gameid=43394403",
+          "sequence": 0
+        },
+        {
+          "game_id": 43394404,
+          "event_id": 271379,
+          "event_name": "ZERO GRAVITY Battle for the Belt North",
+          "team_name": "Team NSSA - RB/MI (Boys 7th)",
+          "opponent": "NE Storm Silver - Ryan",
+          "is_home": false,
+          "date": "10/24/2026",
+          "time": "12:20 PM EDT",
+          "venue": "The Sports Barn",
+          "court": "Court 3",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43394404",
+          "game_url": "https://basketball.exposureevents.com/271379/zero-gravity-battle-for-the-belt-north/game?gameid=43394404",
+          "sequence": 0
+        },
+        {
+          "game_id": 43394413,
+          "event_id": 271379,
+          "event_name": "ZERO GRAVITY Battle for the Belt North",
+          "team_name": "Team NSSA - RB/MI (Boys 7th)",
+          "opponent": "NextGen Playmakers",
+          "is_home": false,
+          "date": "10/25/2026",
+          "time": "9:05 AM EDT",
+          "venue": "The RIM Sports Complex",
+          "court": "Court 4",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43394413",
+          "game_url": "https://basketball.exposureevents.com/271379/zero-gravity-battle-for-the-belt-north/game?gameid=43394413",
+          "sequence": 0
+        },
+        {
+          "game_id": 43394401,
+          "event_id": 271379,
+          "event_name": "ZERO GRAVITY Battle for the Belt North",
+          "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+          "opponent": "Spartans Select - Cyr",
+          "is_home": false,
+          "date": "10/24/2026",
+          "time": "10:10 AM EDT",
+          "venue": "The Sports Barn",
+          "court": "Court 2",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43394401",
+          "game_url": "https://basketball.exposureevents.com/271379/zero-gravity-battle-for-the-belt-north/game?gameid=43394401",
+          "sequence": 0
+        },
+        {
+          "game_id": 43394402,
+          "event_id": 271379,
+          "event_name": "ZERO GRAVITY Battle for the Belt North",
+          "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+          "opponent": "NE Storm Silver - Ryan",
+          "is_home": false,
+          "date": "10/24/2026",
+          "time": "1:25 PM EDT",
+          "venue": "The Sports Barn",
+          "court": "Court 3",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43394402",
+          "game_url": "https://basketball.exposureevents.com/271379/zero-gravity-battle-for-the-belt-north/game?gameid=43394402",
+          "sequence": 0
+        },
+        {
+          "game_id": 43394412,
+          "event_id": 271379,
+          "event_name": "ZERO GRAVITY Battle for the Belt North",
+          "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+          "opponent": "Arsenal Black - Vasquex",
+          "is_home": false,
+          "date": "10/25/2026",
+          "time": "8:00 AM EDT",
+          "venue": "The RIM Sports Complex",
+          "court": "Court 4",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43394412",
+          "game_url": "https://basketball.exposureevents.com/271379/zero-gravity-battle-for-the-belt-north/game?gameid=43394412",
           "sequence": 0
         }
       ]
