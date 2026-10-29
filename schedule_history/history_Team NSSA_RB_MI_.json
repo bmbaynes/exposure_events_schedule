@@ -148,6 +148,21 @@
           "has_changes": false
         }
       }
+    },
+    {
+      "timestamp": "2026-10-29T12:56:27.579067",
+      "reference_date": "2026-10-29T12:56:01.453498",
+      "team_pattern": "Team NSSA*RB/MI*",
+      "events": {
+        "271595": {
+          "event_name": "ZERO GRAVITY Halloween Spookfest",
+          "changes": [
+            "  NEW: Team NSSA - RB/MI (Boys 7th) vs ASA - TJ on 10/31/2026 at 3:35 PM EDT (Starland Sportsplex)",
+            "  NEW: Team NSSA - RB/MI (Boys 7th) vs Shovel Town Basketball Club - Nick on 10/31/2026 at 4:40 PM EDT (Starland Sportsplex)"
+          ],
+          "has_changes": true
+        }
+      }
     }
   ],
   "games_by_event": {
@@ -422,6 +437,51 @@
           "away_score": "",
           "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43419085",
           "game_url": "https://basketball.exposureevents.com/271379/zero-gravity-battle-for-the-belt-north/game?gameid=43419085",
+          "sequence": 0
+        }
+      ]
+    },
+    "271595": {
+      "event_name": "ZERO GRAVITY Halloween Spookfest",
+      "games": [
+        {
+          "game_id": 43489391,
+          "event_id": 271595,
+          "event_name": "ZERO GRAVITY Halloween Spookfest",
+          "team_name": "Team NSSA - RB/MI (Boys 7th)",
+          "opponent": "ASA - TJ",
+          "is_home": true,
+          "date": "10/31/2026",
+          "time": "3:35 PM EDT",
+          "venue": "Starland Sportsplex",
+          "court": "Court 3",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43489391",
+          "game_url": "https://basketball.exposureevents.com/271595/zero-gravity-halloween-spookfest/game?gameid=43489391",
+          "sequence": 0
+        },
+        {
+          "game_id": 43489393,
+          "event_id": 271595,
+          "event_name": "ZERO GRAVITY Halloween Spookfest",
+          "team_name": "Team NSSA - RB/MI (Boys 7th)",
+          "opponent": "Shovel Town Basketball Club - Nick",
+          "is_home": false,
+          "date": "10/31/2026",
+          "time": "4:40 PM EDT",
+          "venue": "Starland Sportsplex",
+          "court": "Court 3",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43489393",
+          "game_url": "https://basketball.exposureevents.com/271595/zero-gravity-halloween-spookfest/game?gameid=43489393",
           "sequence": 0
         }
       ]
