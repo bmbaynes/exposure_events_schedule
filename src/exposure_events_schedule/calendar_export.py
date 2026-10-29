@@ -227,6 +227,9 @@ def create_email_itinerary(
         game_sequences: Optional dict mapping game_id to SEQUENCE number for ICS
         change_summary: Optional list of change description lines to include in email
     """
+    # Determine if there are any games to attach
+    has_games = any(len(games) > 0 for games in games_by_team.values())
+    
     # Top-level multipart/mixed for attachment
     msg = MIMEMultipart('mixed')
     
@@ -254,18 +257,26 @@ def create_email_itinerary(
         f'<meta itemprop="description" content="Basketball tournament schedule for {event_name}">',
         f"<h2>Basketball Tournament Schedule: {event_name}</h2>",
         f"<p><strong>Date Range:</strong> {event_date_range}</p>",
-        f"<p>This email contains a calendar attachment with all games for your teams. "
-        f"Open the attachment to add all games to your calendar automatically.</p>",
-        "<hr>",
     ]
+    
+    if has_games:
+        html_parts.append(
+            f"<p>This email contains a calendar attachment with all games for your teams. "
+            f"Open the attachment to add all games to your calendar automatically.</p>"
+        )
+    html_parts.append("<hr>")
     
     text_parts = [
         f"Basketball Tournament Schedule: {event_name}",
         f"Date Range: {event_date_range}",
-        f"This email contains a calendar attachment with all games for your teams.",
-        "Open the attachment to add all games to your calendar automatically.",
         "-" * 60,
     ]
+    
+    if has_games:
+        text_parts.extend([
+            "This email contains a calendar attachment with all games for your teams.",
+            "Open the attachment to add all games to your calendar automatically.",
+        ])
     
     def _parse_to_iso8601(date_str: str, time_str: str) -> str:
         """Convert MM/DD/YYYY date and HH:MM AM/PM time to ISO 8601 format."""
@@ -315,7 +326,8 @@ def create_email_itinerary(
                 f"@ {g.venue} ({g.court})"
             )
     
-    text_parts.append("\nThe attached .ics file contains all games for all teams above.")
+    if has_games:
+        text_parts.append("\nThe attached .ics file contains all games for all teams above.")
     
     # Add change summary if provided (including empty list for "no changes")
     if change_summary is not None:
@@ -359,21 +371,22 @@ def create_email_itinerary(
     msg.attach(alt_part)
     
     # Add single ICS attachment with all games from all teams
-    safe_event = re.sub(r'[<>:"/\\|?*]', '_', event_name)
-    ics_content = games_to_ics_all_teams(
-        games_by_team, 
-        event_name, 
-        f"{event_name} - Full Schedule", 
-        method="PUBLISH",
-        organizer_email=sender_email,
-        attendee_email=recipient_email,
-        game_sequences=game_sequences,
-    )
-    ics_attachment = create_ics_attachment(
-        ics_content, 
-        f"{safe_event}_schedule.ics"
-    )
-    msg.attach(ics_attachment)
+    if has_games:
+        safe_event = re.sub(r'[<>:"/\\|?*]', '_', event_name)
+        ics_content = games_to_ics_all_teams(
+            games_by_team, 
+            event_name, 
+            f"{event_name} - Full Schedule", 
+            method="PUBLISH",
+            organizer_email=sender_email,
+            attendee_email=recipient_email,
+            game_sequences=game_sequences,
+        )
+        ics_attachment = create_ics_attachment(
+            ics_content, 
+            f"{safe_event}_schedule.ics"
+        )
+        msg.attach(ics_attachment)
     
     return msg
 

@@ -54,13 +54,17 @@ def parse_date_range(date_str: str):
         dt = datetime(int(y), int(m), int(d))
         return dt, dt
     
-    # Try pattern with range: "Oct 3-4, 2026"
-    match = re.match(r'([A-Za-z]+)\s+(\d{1,2})-(\d{1,2}),\s*(\d{4})', date_str)
+    # Try pattern with range: "Oct 3-4, 2026" or "Oct 31 - Nov 1, 2026" (cross-month)
+    match = re.match(r'([A-Za-z]+)\s+(\d{1,2})\s*-\s*([A-Za-z]+)?\s*(\d{1,2}),\s*(\d{4})', date_str)
     if match:
-        month_str, day1, day2, year = match.groups()
+        month_str, day1, month_str2, day2, year = match.groups()
         month = datetime.strptime(month_str[:3], "%b").month
         start = datetime(int(year), month, int(day1))
-        end = datetime(int(year), month, int(day2))
+        if month_str2:
+            month2 = datetime.strptime(month_str2[:3], "%b").month
+            end = datetime(int(year), month2, int(day2))
+        else:
+            end = datetime(int(year), month, int(day2))
         return start, end
     
     # Try pattern: "Oct 3, 2026"
@@ -80,8 +84,8 @@ def get_weekend_range(reference_date: Optional[datetime] = None):
         reference_date = datetime.now()
     
     days_ahead = 5 - reference_date.weekday()  # 5 = Saturday
-    saturday = reference_date + timedelta(days=days_ahead)
-    sunday = saturday + timedelta(days=1)
+    saturday = (reference_date + timedelta(days=days_ahead)).replace(hour=0, minute=0, second=0, microsecond=0)
+    sunday = (saturday + timedelta(days=1)).replace(hour=23, minute=59, second=59, microsecond=999999)
     return saturday, sunday
 
 
@@ -103,6 +107,7 @@ def scrape_state_events(state: str, start_date: str, end_date: Optional[str] = N
     Returns:
         List of Event objects from the search results table
     """
+    print(f"  scrape_state_events(state={state}, start_date={start_date}, end_date={end_date}, max_events={max_events})")
     url = f"https://basketball.exposureevents.com/youth-basketball-events/{state}"
     events = []
     
@@ -147,23 +152,22 @@ def scrape_state_events(state: str, start_date: str, end_date: Optional[str] = N
             }''')
             page.wait_for_timeout(5000)
             
-            # Get the search results HTML (after the second "Showing" text)
+            # Get the full search results page HTML for parsing
             results_html = page.evaluate('''() => {
-                const allText = document.body.innerText;
-                const first = allText.indexOf('Showing');
-                const second = allText.indexOf('Showing', first + 1);
-                if (second === -1) return '';
-                const body = document.body.innerHTML;
-                return body.substring(second);
+                return document.body.innerHTML;
             }''')
+            print(f"  scrape_state_events({state}): retrieved {len(results_html)} chars of page HTML")
             
             events = parse_events_from_results(results_html)
+            event_details = ", ".join(f"{e.name} ({e.start_date} - {e.end_date})" for e in events)
+            print(f"  scrape_state_events({state}): parsed {len(events)} events from results (start={start_date}, end={end_date}): {event_details}")
             
         except Exception as e:
-            print(f"Error scraping {state}: {e}")
+            print(f"  Error scraping {state}: {e}")
         finally:
             browser.close()
     
+    print(f"  scrape_state_events({state}): returning {len(events[:max_events])} events")
     return events[:max_events]
 
 
@@ -178,8 +182,14 @@ def parse_events_from_results(html: str) -> List[Event]:
     cities = re.findall(r'data-bind="html: City">([^<]+)</span>', html)
     states_span = re.findall(r'data-bind="html: StateRegion">([^<]+)</span>', html)
     
+    print(f"    parse_events_from_results: orgs={len(orgs)}, names={len(names)}, dates={len(dates)}, cities={len(cities)}, states={len(states_span)}")
+    
     # Combine by index (all arrays should have same length except states)
-    for i in range(min(len(orgs), len(names), len(dates), len(cities))):
+    limit = min(len(orgs), len(names), len(dates), len(cities))
+    if limit < max(len(orgs), len(names), len(dates), len(cities)):
+        print(f"    parse_events_from_results: WARNING - array length mismatch, using min={limit}")
+    
+    for i in range(limit):
         org = orgs[i].strip()
         url, eid, slug, name = names[i]
         date_str = dates[i].strip()
@@ -189,6 +199,7 @@ def parse_events_from_results(html: str) -> List[Event]:
         # Parse date
         start_dt, end_dt = parse_date_range(date_str)
         if not start_dt or not end_dt:
+            print(f"    parse_events_from_results: SKIP (unparseable date '{date_str}'): {name.strip()}")
             continue
         
         start_date = start_dt.strftime("%m/%d/%Y")
@@ -209,6 +220,7 @@ def parse_events_from_results(html: str) -> List[Event]:
             url=url,
         ))
     
+    print(f"    parse_events_from_results: returning {len(events)} events")
     return events
 
 
@@ -251,21 +263,30 @@ def find_events_ma_nh(
     next_saturday = saturday + timedelta(days=7)
     next_sunday = sunday + timedelta(days=7)
     
+    print(f"  find_events_ma_nh: filtering {len(unique_events)} unique events for weekend {saturday:%m/%d/%Y}-{sunday:%m/%d/%Y} (next: {next_saturday:%m/%d/%Y}-{next_sunday:%m/%d/%Y})")
+    
     weekend_events = []
     for event in unique_events:
         start_dt, end_dt = parse_date_range(f"{event.start_date} - {event.end_date}")
         if not start_dt or not end_dt:
+            print(f"    SKIP (unparseable dates): {event.name} ({event.start_date} - {event.end_date}) [{event.city}, {event.state}]")
             continue
             
-        if event_overlaps_weekend(start_dt, end_dt, saturday, sunday):
+        is_current = event_overlaps_weekend(start_dt, end_dt, saturday, sunday)
+        is_next = event_overlaps_weekend(start_dt, end_dt, next_saturday, next_sunday)
+        
+        print(f"    {event.name} ({event.start_date} - {event.end_date}) [{event.city}, {event.state}] [{event.organization}] -> current_weekend={is_current}, next_weekend={is_next}")
+            
+        if is_current:
             event.is_current_weekend = True
             event.is_upcoming_weekend = False
             weekend_events.append(event)
-        elif event_overlaps_weekend(start_dt, end_dt, next_saturday, next_sunday):
+        elif is_next:
             event.is_current_weekend = False
             event.is_upcoming_weekend = True
             weekend_events.append(event)
     
+    print(f"  find_events_ma_nh: {len(weekend_events)} events match current/upcoming weekend")
     return weekend_events
 
 

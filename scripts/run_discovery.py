@@ -5,7 +5,6 @@ from datetime import datetime
 
 def main():
     ref_date = datetime.now()
-    print(f'Running discovery for weekend of: {ref_date}')
     
     results = generate_email_itinerary(
         reference_date=ref_date,
