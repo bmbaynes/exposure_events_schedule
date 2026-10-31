@@ -163,6 +163,18 @@
           "has_changes": true
         }
       }
+    },
+    {
+      "timestamp": "2026-10-31T11:41:51.424470",
+      "reference_date": "2026-10-31T11:41:26.257797",
+      "team_pattern": "Team NSSA*RB/MI*",
+      "events": {
+        "271595": {
+          "event_name": "ZERO GRAVITY Halloween Spookfest",
+          "changes": [],
+          "has_changes": false
+        }
+      }
     }
   ],
   "games_by_event": {
