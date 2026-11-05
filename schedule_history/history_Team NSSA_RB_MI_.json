@@ -175,6 +175,25 @@
           "has_changes": false
         }
       }
+    },
+    {
+      "timestamp": "2026-11-05T14:20:44.686576",
+      "reference_date": "2026-11-05T14:20:21.797166",
+      "team_pattern": "Team NSSA*RB/MI*",
+      "events": {
+        "271596": {
+          "event_name": "ZERO GRAVITY Battle for the Belt South",
+          "changes": [
+            "  NEW: Team NSSA - RB/MI (Boys 7th) vs South Shore Wildcats - Fazzi on 11/07/2026 at 8:00 AM EST (Starland Sportsplex)",
+            "  NEW: Team NSSA - RB/MI (Boys 7th) vs Breakout Black - Comeau on 11/07/2026 at 9:05 AM EST (Starland Sportsplex)",
+            "  NEW: Team NSSA - RB/MI (Boys 7th) vs Middlesex Magic SS - O'Brien on 11/08/2026 at 10:10 AM EST (Starland Sportsplex)",
+            "  NEW: Team NSSA Black - RB/MI (Boys 7th) vs BCRI - Fagundes on 11/07/2026 at 10:10 AM EST (Starland Sportsplex)",
+            "  NEW: Team NSSA Black - RB/MI (Boys 7th) vs Middlesex Magic SS - Stinchfield on 11/07/2026 at 11:15 AM EST (Starland Sportsplex)",
+            "  NEW: Team NSSA Black - RB/MI (Boys 7th) vs Life Of Hoops (Orange) on 11/08/2026 at 2:30 PM EST (Boston Sports Institute )"
+          ],
+          "has_changes": true
+        }
+      }
     }
   ],
   "games_by_event": {
@@ -494,6 +513,131 @@
           "away_score": "",
           "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43489393",
           "game_url": "https://basketball.exposureevents.com/271595/zero-gravity-halloween-spookfest/game?gameid=43489393",
+          "sequence": 0
+        }
+      ]
+    },
+    "271596": {
+      "event_name": "ZERO GRAVITY Battle for the Belt South",
+      "games": [
+        {
+          "game_id": 43694576,
+          "event_id": 271596,
+          "event_name": "ZERO GRAVITY Battle for the Belt South",
+          "team_name": "Team NSSA - RB/MI (Boys 7th)",
+          "opponent": "South Shore Wildcats - Fazzi",
+          "is_home": false,
+          "date": "11/07/2026",
+          "time": "8:00 AM EST",
+          "venue": "Starland Sportsplex",
+          "court": "Court 7",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43694576",
+          "game_url": "https://basketball.exposureevents.com/271596/zero-gravity-battle-for-the-belt-south/game?gameid=43694576",
+          "sequence": 0
+        },
+        {
+          "game_id": 43694577,
+          "event_id": 271596,
+          "event_name": "ZERO GRAVITY Battle for the Belt South",
+          "team_name": "Team NSSA - RB/MI (Boys 7th)",
+          "opponent": "Breakout Black - Comeau",
+          "is_home": false,
+          "date": "11/07/2026",
+          "time": "9:05 AM EST",
+          "venue": "Starland Sportsplex",
+          "court": "Court 7",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43694577",
+          "game_url": "https://basketball.exposureevents.com/271596/zero-gravity-battle-for-the-belt-south/game?gameid=43694577",
+          "sequence": 0
+        },
+        {
+          "game_id": 43694580,
+          "event_id": 271596,
+          "event_name": "ZERO GRAVITY Battle for the Belt South",
+          "team_name": "Team NSSA - RB/MI (Boys 7th)",
+          "opponent": "Middlesex Magic SS - O'Brien",
+          "is_home": true,
+          "date": "11/08/2026",
+          "time": "10:10 AM EST",
+          "venue": "Starland Sportsplex",
+          "court": "Court 5",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43694580",
+          "game_url": "https://basketball.exposureevents.com/271596/zero-gravity-battle-for-the-belt-south/game?gameid=43694580",
+          "sequence": 0
+        },
+        {
+          "game_id": 43695780,
+          "event_id": 271596,
+          "event_name": "ZERO GRAVITY Battle for the Belt South",
+          "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+          "opponent": "BCRI - Fagundes",
+          "is_home": true,
+          "date": "11/07/2026",
+          "time": "10:10 AM EST",
+          "venue": "Starland Sportsplex",
+          "court": "Court 7",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43695780",
+          "game_url": "https://basketball.exposureevents.com/271596/zero-gravity-battle-for-the-belt-south/game?gameid=43695780",
+          "sequence": 0
+        },
+        {
+          "game_id": 43695782,
+          "event_id": 271596,
+          "event_name": "ZERO GRAVITY Battle for the Belt South",
+          "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+          "opponent": "Middlesex Magic SS - Stinchfield",
+          "is_home": true,
+          "date": "11/07/2026",
+          "time": "11:15 AM EST",
+          "venue": "Starland Sportsplex",
+          "court": "Court 7",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43695782",
+          "game_url": "https://basketball.exposureevents.com/271596/zero-gravity-battle-for-the-belt-south/game?gameid=43695782",
+          "sequence": 0
+        },
+        {
+          "game_id": 43695785,
+          "event_id": 271596,
+          "event_name": "ZERO GRAVITY Battle for the Belt South",
+          "team_name": "Team NSSA Black - RB/MI (Boys 7th)",
+          "opponent": "Life Of Hoops (Orange)",
+          "is_home": false,
+          "date": "11/08/2026",
+          "time": "2:30 PM EST",
+          "venue": "Boston Sports Institute ",
+          "court": "Court 1",
+          "division": "Boys 7th",
+          "bracket": "",
+          "round": 0,
+          "home_score": "",
+          "away_score": "",
+          "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43695785",
+          "game_url": "https://basketball.exposureevents.com/271596/zero-gravity-battle-for-the-belt-south/game?gameid=43695785",
           "sequence": 0
         }
       ]
