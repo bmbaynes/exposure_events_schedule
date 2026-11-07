@@ -194,6 +194,18 @@
           "has_changes": true
         }
       }
+    },
+    {
+      "timestamp": "2026-11-07T12:28:05.967858",
+      "reference_date": "2026-11-07T12:27:43.054613",
+      "team_pattern": "Team NSSA*RB/MI*",
+      "events": {
+        "271596": {
+          "event_name": "ZERO GRAVITY Battle for the Belt South",
+          "changes": [],
+          "has_changes": false
+        }
+      }
     }
   ],
   "games_by_event": {
