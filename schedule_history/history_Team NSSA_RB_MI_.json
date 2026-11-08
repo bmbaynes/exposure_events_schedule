@@ -206,6 +206,18 @@
           "has_changes": false
         }
       }
+    },
+    {
+      "timestamp": "2026-11-08T12:47:51.124634",
+      "reference_date": "2026-11-08T12:47:28.826791",
+      "team_pattern": "Team NSSA*RB/MI*",
+      "events": {
+        "271596": {
+          "event_name": "ZERO GRAVITY Battle for the Belt South",
+          "changes": [],
+          "has_changes": false
+        }
+      }
     }
   ],
   "games_by_event": {
@@ -546,8 +558,8 @@
           "division": "Boys 7th",
           "bracket": "",
           "round": 0,
-          "home_score": "",
-          "away_score": "",
+          "home_score": "37",
+          "away_score": "31",
           "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43694576",
           "game_url": "https://basketball.exposureevents.com/271596/zero-gravity-battle-for-the-belt-south/game?gameid=43694576",
           "sequence": 0
@@ -566,8 +578,8 @@
           "division": "Boys 7th",
           "bracket": "",
           "round": 0,
-          "home_score": "",
-          "away_score": "",
+          "home_score": "45",
+          "away_score": "49",
           "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43694577",
           "game_url": "https://basketball.exposureevents.com/271596/zero-gravity-battle-for-the-belt-south/game?gameid=43694577",
           "sequence": 0
@@ -606,8 +618,8 @@
           "division": "Boys 7th",
           "bracket": "",
           "round": 0,
-          "home_score": "",
-          "away_score": "",
+          "home_score": "62",
+          "away_score": "36",
           "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43695780",
           "game_url": "https://basketball.exposureevents.com/271596/zero-gravity-battle-for-the-belt-south/game?gameid=43695780",
           "sequence": 0
@@ -626,8 +638,8 @@
           "division": "Boys 7th",
           "bracket": "",
           "round": 0,
-          "home_score": "",
-          "away_score": "",
+          "home_score": "51",
+          "away_score": "41",
           "ical_url": "https://ical.exposureevents.com/calendar-game.ics?expired=1791072000&gameid=43695782",
           "game_url": "https://basketball.exposureevents.com/271596/zero-gravity-battle-for-the-belt-south/game?gameid=43695782",
           "sequence": 0
